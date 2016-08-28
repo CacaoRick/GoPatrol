@@ -81,7 +81,8 @@ event.on("patrol", function() {
 		// 檢查 pokemons 中的每隻寶可夢剩餘時間
 		event.emit("checkLastTime");
 	}).catch(function(err) {
-		console.error("錯誤：" + err);
+		console.error("錯誤");
+		console.error(err);
 	});
 });
 
@@ -117,6 +118,26 @@ event.on("informAllPokemons", function(chatId) {
 event.on("informToActiveUsers", function(pokemon, lastTime) {
 	for (var i = 0; i < activeChatIDs.length; i++) {
 		sendVenue(activeChatIDs[i], pokemon, lastTime);
+	}
+});
+
+// 將寶可夢通知給所有啟動中的使用者
+event.on("getmap", function(chatId) {
+	if (pokemons.length > 0) {
+		telegramBot.sendMessage(chatId, "地圖製作中...");
+		var mapUrl = Pokespotter.getMapsUrl(centerLocation, pokemons, "512x512");
+
+		var message = "";
+		var index = 1;
+		pokemons.forEach(function(p) {
+			message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
+				" 剩餘:" + getMMSS(getLastTime(p.expirationTime)) + " 結束:" + getHHMMSS(p.expirationTime) + "\n";
+			index++;
+		});
+
+		telegramBot.sendMessage(chatId, message);
+	} else {
+		telegramBot.sendMessage(chatId, "目前無資料");
 	}
 });
 
@@ -185,7 +206,7 @@ if (channelID != null) {
 
 		// 取得附近寶可夢的地圖圖檔
 		if (msg.text == "/getmap") {
-			
+			event.emit("getmap", chatId);
 		}
 	});
 
@@ -219,7 +240,7 @@ function sendVenue(chatId, pokemon, lastTime) {
 		pokemon.latitude,
 		pokemon.longitude,
 		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId],
-		"距離:" + pokemon.distance + "m，剩餘:" + getMMSS(lastTime) + "，結束:" + getHHMMSS(pokemon.expirationTime)
+		"距離:" + pokemon.distance + "m 剩餘:" + getMMSS(lastTime) + " 結束:" + getHHMMSS(pokemon.expirationTime)
 	);
 }
 
