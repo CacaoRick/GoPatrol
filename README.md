@@ -1,5 +1,5 @@
 # GoPatrol
-以指定的位置為中心進行巡邏尋找附近的寶可夢（範圍約半徑100多公尺），利用 Telegram bot 送出通知給使用者、頻道或群組。使用 [pokespotter](https://github.com/brentschooley/pokespotter) 與 [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) Node.js API 製作。
+以指定的位置為中心進行巡邏尋找附近的寶可夢，利用 Telegram bot 送出通知給使用者、頻道或群組。使用 [pokespotter](https://github.com/brentschooley/pokespotter) 與 [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) Node.js API 製作。
 
 # 使用說明
 需使用 [Node.js](https://nodejs.org/en/) 與 [npm](https://www.npmjs.com/)。
@@ -25,6 +25,9 @@
 - `/stop`：停止巡邏
 - `/getmap`：取得附近寶可夢地圖（尚未實做）
 - 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
+
+# 警告
+用這個一定有被BAN的風險，使用前自己考慮要不要用，請勿使用主帳號登入！
 
 # 截圖
 Telegram Desktop
