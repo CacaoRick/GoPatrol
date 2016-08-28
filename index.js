@@ -2,6 +2,7 @@
 const config = require("./config.js");
 const pokemonNames = require("./pokemon_names.js");
 const EventEmitter = require("events");
+const request = require('request');
 const Pokespotter = require("pokespotter");
 const TelegramBot = require("node-telegram-bot-api");
 
@@ -84,6 +85,18 @@ event.on("patrol", function() {
 	}).catch(function(err) {
 		console.error("錯誤");
 		console.error(err);
+
+		// 通知使用者
+		activeChatIDs.forEach(function(id) {
+			telegramBot.sendVenue(id, "伺服器遇到錯誤，停止執行");
+		});
+
+		if (channelID == null) {
+			// 將使用者移除
+			activeChatIDs = [];
+			// 更改執行狀態
+			isPatrolling = false;
+		}
 	});
 });
 
@@ -122,21 +135,42 @@ event.on("informToActiveUsers", function(pokemon, lastTime) {
 	}
 });
 
-// 將寶可夢通知給所有啟動中的使用者
+// 畫地圖，傳給下指令者
 event.on("getmap", function(chatId) {
 	if (pokemons.length > 0) {
-		telegramBot.sendMessage(chatId, "地圖製作中...");
+		telegramBot.sendMessage(chatId, "地圖製作中，請稍候...");
 		var mapUrl = Pokespotter.getMapsUrl(centerLocation, pokemons, "512x512");
 
-		var message = "";
-		var index = 1;
-		pokemons.forEach(function(p) {
-			message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
-				" 剩餘:" + getMMSS(getLastTime(p.expirationTime)) + " 結束:" + getHHMMSS(p.expirationTime) + "\n";
-			index++;
-		});
+		// 將地圖圖檔下載傳給使用者
+		request({url:mapUrl, encoding:null}, function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var imageBuffer = Buffer.from(body);
+				// 將地圖傳給使用者
+				telegramBot.sendPhoto(chatId, imageBuffer);
 
-		telegramBot.sendMessage(chatId, message);
+				var message = "";
+				var index = 1;
+				pokemons.forEach(function(p) {
+					var lastTime = getLastTime(p.expirationTime);
+					if (lastTime > 0) {
+						message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
+						" 剩餘:" + getMMSS(lastTime) + " 結束:" + getHHMMSS(p.expirationTime) + "\n";	
+					} else {
+						message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
+						" 已結束:" + getHHMMSS(p.expirationTime) + "\n";	
+					}
+					
+					index++;
+				});
+
+				// 傳送寶可夢編號和資訊
+				telegramBot.sendMessage(chatId, message);
+			} else {
+				// 請求失敗
+				telegramBot.sendMessage(chatId, "地圖圖檔請求失敗(狀態：" + response.statusCode + ")");
+				console.log(error);
+			}
+		});
 	} else {
 		telegramBot.sendMessage(chatId, "目前無資料");
 	}

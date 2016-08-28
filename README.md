@@ -25,7 +25,7 @@
 - `/help`：查看說明
 - `/start`：開始巡邏
 - `/stop`：停止巡邏
-- `/getmap`：取得附近寶可夢地圖（尚未實做）
+- `/getmap`：取得附近寶可夢地圖
 - 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
 
 # 警告
@@ -39,3 +39,7 @@ Telegram Desktop
 Telegram iOS APP
 
 ![iOS Demo](screenshot/iOSDemo.png)
+
+/getmap
+
+![getmap](screenshot/getmap.jpg)
