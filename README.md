@@ -33,4 +33,4 @@ Telegram Desktop
 
 Telegram iOS APP
 
-![iOS Demo](screenshot/iOSDemo.jpg)
+![iOS Demo](screenshot/iOSDemo.png)
