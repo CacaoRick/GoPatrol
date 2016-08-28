@@ -24,6 +24,7 @@ class TelegramBotWithVenus extends TelegramBot {
 const event = new EventEmitter();
 var telegramBot = new TelegramBotWithVenus(config.telegramBotToken, { polling: true });
 var pokespotter = Pokespotter(config.account);
+pokespotter.DEBUG = true;
 
 var blacklist = config.blacklist;
 var centerLocation = config.initCenterLocation;
@@ -239,8 +240,8 @@ function sendVenue(chatId, pokemon, lastTime) {
 		chatId,
 		pokemon.latitude,
 		pokemon.longitude,
-		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId],
-		"距離:" + pokemon.distance + "m 剩餘:" + getMMSS(lastTime) + " 結束:" + getHHMMSS(pokemon.expirationTime)
+		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId] + " " + pokemon.distance + "m",
+		"剩餘:" + getMMSS(lastTime) + " 結束:" + getHHMMSS(pokemon.expirationTime)
 	);
 }
 
