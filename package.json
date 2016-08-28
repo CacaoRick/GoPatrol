@@ -1,0 +1,29 @@
+{
+  "name": "gopatrol",
+  "version": "1.0.0",
+  "description": "Telegram bot for notice nearby pokemon.",
+  "main": "index.js",
+  "dependencies": {
+    "events": "^1.1.1",
+    "node-telegram-bot-api": "^0.23.3",
+    "pokespotter": "^0.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CacaoRick/GoPatrol.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CacaoRick/GoPatrol/issues"
+  },
+  "homepage": "https://github.com/CacaoRick/GoPatrol",
+  "keywords": [
+    "Pokemon Go",
+    "Telegram Bot"
+  ],
+  "author": "CacaoRick",
+  "license": "MIT"
+}
