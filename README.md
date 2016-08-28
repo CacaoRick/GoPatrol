@@ -3,6 +3,7 @@
 
 # 使用說明
 需使用 [Node.js](https://nodejs.org/en/)
+
 1. 安裝 `npm install gopatrol`
 2. 複製一份 `example_config.js` 改名為 `config.js`
 3. 編輯 `config.js`
