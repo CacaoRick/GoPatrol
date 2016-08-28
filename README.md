@@ -4,10 +4,12 @@
 # 使用說明
 需使用 [Node.js](https://nodejs.org/en/) 與 [npm](https://www.npmjs.com/)。
 
-1. 安裝 `npm install gopatrol`
-2. 複製一份 `example_config.js` 改名為 `config.js`
-3. 編輯 `config.js`
-4. 執行 `node index.js`
+1. 下載 zip 檔解壓縮（右上角綠色 Clone or downloa 按鈕 > Download ZIP），或是用 git clone
+2. 使用 Node.js command prompt 或其他 Terminal 軟體，cd 到 GoPatrol 目錄下
+2. 執行 `npm install` 安裝所需的 module
+3. 複製一份 `example_config.js` 改名為 `config.js`
+4. 以文字編輯器開啟 `config.js` 編輯設定檔
+5. 執行 `node index.js`
 
 廣播頻道模式會自動開始巡邏。機器人模式需在聊天中送出 `/start` 指令以開始巡邏。
 
