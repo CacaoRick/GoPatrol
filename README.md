@@ -9,10 +9,16 @@
 3. 編輯 `config.js`
 4. 執行 `node index.js`
 
-機器人模式時（`telegramChannelID` 為 `null` 時）需對機器人送出 `/start` 指令開始巡邏。
+廣播頻道模式會自動開始巡邏。機器人模式需在聊天中送出 `/start` 指令以開始巡邏。
+
+### 廣播頻道模式
+將 `config.json` 中的 `telegramChannelID` 設為某個群組或頻道，程式會將找到的寶可夢廣播至該群組或頻道中。
+
+### 機器人模式
+將 `config.json` 中的 `telegramChannelID` 設為 `null`，將機器人加為好友，可在聊天中使用指令控制本程式。
 
 # 指令說明
-限機器人模式使用（`telegramChannelID` 為 `null` 時）：
+限機器人模式使用，對機器人送出以下指令來使用：
 
 - `/help`：查看說明。
 - `/start`：開始巡邏。
