@@ -8,6 +8,7 @@
 2. 複製一份 `example_config.js` 改名為 `config.js`
 3. 編輯 `config.js`
 4. 執行 `node index.js`
+
 機器人模式時（`telegramChannelID` 為 `null` 時）需對機器人送出 `/start` 指令開始巡邏。
 
 # 指令說明
