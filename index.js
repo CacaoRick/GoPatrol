@@ -218,7 +218,7 @@ function sendVenue(chatId, pokemon, lastTime) {
 		chatId,
 		pokemon.latitude,
 		pokemon.longitude,
-		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId] + " (" + pokemon.spawnPointId + ")",
+		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId],
 		"距離:" + pokemon.distance + "m，剩餘:" + getMMSS(lastTime) + "，結束:" + getHHMMSS(pokemon.expirationTime)
 	);
 }
