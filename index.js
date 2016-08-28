@@ -28,8 +28,8 @@ var pokespotter = Pokespotter(config.account);
 var blacklist = config.blacklist;
 var centerLocation = config.initCenterLocation;
 var spotterOptional = {
-	steps: 2,
-	requestDelay: 1000,
+	steps: config.searchSteps,
+	requestDelay: config.searchDelay,
 	currentTime: Date.now()
 }
 
@@ -231,6 +231,7 @@ function doNextPatrol() {
 	} else {
 		// 更改執行狀態
 		isPatrolling = false;
+		console.log("無使用者，已停止巡邏");
 	}
 }
 

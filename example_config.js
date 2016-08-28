@@ -1,5 +1,6 @@
 module.exports = {
 	/**
+	 * 用這個一定有被BAN的風險，請勿使用主帳號登入！
 	 * 帳號、密碼、帳號類型（google / ptc），可輸入多組
 	 * 範例：
 	 * account:[
@@ -33,6 +34,12 @@ module.exports = {
 		latitude: 25.0339031,
 		longitude: 121.5623212
 	},
+
+	// 搜尋範圍大約是這個數字*100公尺，設越大要找越久
+	searchSteps: 2,
+
+	// 搜尋延遲
+	searchDelay: 1000,
 
 	/**
 	 * 寶可夢黑名單，設定後不會通知，編號可參考 pokemon_name.js
