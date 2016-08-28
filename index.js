@@ -5,7 +5,7 @@ const EventEmitter = require("events");
 const Pokespotter = require("pokespotter");
 const TelegramBot = require("node-telegram-bot-api");
 
-// 為 TelegramBot 加入 sendVenus 功能
+// 為 TelegramBot 加入 sendVenue 功能
 class TelegramBotWithVenus extends TelegramBot {
 	constructor(token, options = {}) {
 		super(token, options);
@@ -26,7 +26,7 @@ var telegramBot = new TelegramBotWithVenus(config.telegramBotToken, { polling: t
 var pokespotter = Pokespotter(config.account);
 
 var blacklist = config.blacklist;
-var location = config.initCenterLocation;
+var centerLocation = config.initCenterLocation;
 var spotterOptional = {
 	steps: 2,
 	requestDelay: 1000,
@@ -47,7 +47,7 @@ event.on("patrol", function() {
 	// 執行 pokespotter 尋找附近寶可夢
 	spotterOptional.currentTime = Date.now();
 	console.log("------------------------- 開始巡邏 " + getHHMMSS(spotterOptional.currentTime) + " -------------------------");
-	pokespotter.get(location, spotterOptional).then(function(nearbyPokemons) {
+	pokespotter.get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
 
 		//console.log("找到 #", np.pokemonId, pokemonNames[np.pokemonId], np.spawnPointId, getHHMMSS(np.expirationTime));
 		var newPokemonCount = 0;
@@ -76,7 +76,7 @@ event.on("patrol", function() {
 			}
 		});
 
-		console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻。");
+		console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻");
 
 		// 檢查 pokemons 中的每隻寶可夢剩餘時間
 		event.emit("checkLastTime");
@@ -123,7 +123,7 @@ event.on("informToActiveUsers", function(pokemon, lastTime) {
 // 檢查是否為頻道模式
 const channelID = config.telegramChannelID;
 if (channelID != null) {
-	console.log("廣播模式");
+	console.log("廣播模式啟動");
 	// 將頻道ID存入 activeChatIDs
 	activeChatIDs = [channelID];
 	// 觸發第一次巡邏
@@ -131,7 +131,7 @@ if (channelID != null) {
 	// 更改執行狀態
 	isPatrolling = true;
 } else {
-	console.log("機器人模式");
+	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令");
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
 		var chatId = msg.from.id;
@@ -187,6 +187,29 @@ if (channelID != null) {
 		if (msg.text == "/getmap") {
 			
 		}
+	});
+
+	telegramBot.on("location", function(msg) {
+		// 更改座標
+		centerLocation = msg.location;
+
+		// 準備通知訊息
+		var name = msg.from.username;
+		if (typeof name === "undefined") {
+			name = msg.from.id;
+		}
+		var message = name + " 更改巡邏中心位置";
+		console.log(message);
+
+		// 通知下指令者
+		telegramBot.sendMessage(msg.from.id, "已更改巡邏中心位置");
+
+		// 通知其他使用者
+		activeChatIDs.forEach(function(id) {
+			if (id != msg.from.id) {
+				telegramBot.sendVenue(id, centerLocation.latitude, centerLocation.longitude, message, centerLocation.latitude + ", " + centerLocation.longitude);
+			}
+		});
 	});
 }
 
