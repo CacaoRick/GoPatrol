@@ -88,7 +88,7 @@ event.on("patrol", function() {
 
 		// 通知使用者
 		activeChatIDs.forEach(function(id) {
-			telegramBot.sendVenue(id, "伺服器遇到錯誤，停止執行");
+			telegramBot.sendMessage(id, "伺服器遇到錯誤，停止執行");
 		});
 
 		if (channelID == null) {
@@ -124,14 +124,14 @@ event.on("checkLastTime", function() {
 event.on("informAllPokemons", function(chatId) {
 	for (var i = 0; i < pokemons.length; i++) {
 		var lastTime = getLastTime(pokemons[i].expirationTime);
-		sendVenue(chatId, pokemons[i], lastTime);
+		sendPokemon(chatId, pokemons[i], lastTime);
 	}
 });
 
 // 將寶可夢通知給所有啟動中的使用者
 event.on("informToActiveUsers", function(pokemon, lastTime) {
 	for (var i = 0; i < activeChatIDs.length; i++) {
-		sendVenue(activeChatIDs[i], pokemon, lastTime);
+		sendPokemon(activeChatIDs[i], pokemon, lastTime);
 	}
 });
 
@@ -269,7 +269,7 @@ if (channelID != null) {
 	});
 }
 
-function sendVenue(chatId, pokemon, lastTime) {
+function sendPokemon(chatId, pokemon, lastTime) {
 	telegramBot.sendVenue(
 		chatId,
 		pokemon.latitude,
