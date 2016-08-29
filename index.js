@@ -172,7 +172,6 @@ if (channelID != null) {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令");
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
-		console.log(msg);
 		var chatId = msg.chat.id;
 		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;
 		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;
