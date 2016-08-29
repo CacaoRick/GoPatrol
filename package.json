@@ -6,7 +6,8 @@
   "dependencies": {
     "events": "^1.1.1",
     "node-telegram-bot-api": "^0.23.3",
-    "pokespotter": "^0.1.5"
+    "pokespotter": "^0.1.5",
+    "request": "^2.74.0"
   },
   "devDependencies": {},
   "scripts": {
