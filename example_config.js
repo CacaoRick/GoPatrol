@@ -23,7 +23,7 @@ module.exports = {
 
 	/**
 	 * 管理者名單
-	 * 只有管理者可以使用機器人修改設定（/start、/stop、傳送位置訊息更改中心）
+	 * 只有管理者可以直接對機器人使用指令，以免路人亂加你機器人好友
 	 * 填入使用者名稱，可設定多個使用者為管理者（注意，這裡不須@）
 	 * telegramAdminUsername: ["AdminUser1", "AdminUser2"], 
 	 */

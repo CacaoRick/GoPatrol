@@ -174,7 +174,7 @@ if (channelID != null) {
 	telegramBot.on("message", function(msg) {
 		var chatId = msg.chat.id;
 		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;
-
+		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;
 		var command = msg.text.split("@")[0];
 
 		// 發送說明
@@ -196,7 +196,7 @@ if (channelID != null) {
 		// 登錄chatId，若巡邏為執行則觸發巡邏
 		if (command == "/start" && isAdmin) {
 			// 若 chatId 不在清單中，加進去
-			if (activeChatIDs.indexOf(chatId) < 0) {
+			if (!isInActiveChatID) {
 				activeChatIDs.push(chatId);
 				console.log("新增使用者：" + chatId + "，目前使用者：" + activeChatIDs);
 			}
@@ -225,8 +225,9 @@ if (channelID != null) {
 			telegramBot.sendMessage(chatId, "管理員停止通知");
 		}
 
-		// 取得附近寶可夢的地圖圖檔
-		if (command == "/getmap") {
+		// 判斷有在ActiveChatID才能使用，才不會被路人亂加機器人好用亂用
+		if (command == "/getmap" && isInActiveChatID) {
+			// 取得附近寶可夢的地圖圖檔
 			event.emit("getmap", chatId);
 		}
 	});
