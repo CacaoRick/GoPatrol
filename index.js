@@ -172,63 +172,66 @@ if (channelID != null) {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令");
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
+		console.log(msg);
 		var chatId = msg.chat.id;
 		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;
 		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;
-		var command = msg.text.split("@")[0];
-
-		// 發送說明
-		if (command == "/help") {
-			telegramBot.sendMessage(
-				chatId,
-				"說明：\n" +
-				"以指定的位置為中心進行巡邏（範圍約半徑100多公尺），將遇到的寶可夢通知給使用者\n" +
-				"一般指令：\n" +
-				"/getmap 取得附近寶可夢地圖\n\n" +
-				"管理員專用：\n" + 
-				"/help 查看說明\n" +
-				"/start 開始巡邏\n" +
-				"/stop 停止巡邏\n" +
-				"傳送位置訊息可更改巡邏中心位置"
-			);
-		}
-
-		// 登錄chatId，若巡邏為執行則觸發巡邏
-		if (command == "/start" && isAdmin) {
-			// 若 chatId 不在清單中，加進去
-			if (!isInActiveChatID) {
-				activeChatIDs.push(chatId);
-				console.log("新增使用者：" + chatId + "，目前使用者：" + activeChatIDs);
+		var command = "";
+		if (typeof msg.text !== "undefined") {
+			command = msg.text.split("@")[0];
+			// 發送說明
+			if (command == "/help") {
+				telegramBot.sendMessage(
+					chatId,
+					"說明：\n" +
+					"以指定的位置為中心進行巡邏（範圍約半徑100多公尺），將遇到的寶可夢通知給使用者\n" +
+					"一般指令：\n" +
+					"/getmap 取得附近寶可夢地圖\n\n" +
+					"管理員專用：\n" + 
+					"/help 查看說明\n" +
+					"/start 開始巡邏\n" +
+					"/stop 停止巡邏\n" +
+					"傳送位置訊息可更改巡邏中心位置"
+				);
 			}
 
-			// 若原本沒在執行中，觸發巡邏並更改執行狀態
-			if (!isPatrolling) {
-				// 觸發第一次巡邏
-				event.emit("patrol");
-				// 更改執行狀態
-				isPatrolling = true;
-				telegramBot.sendMessage(chatId, "管理員啟動通知");
-			} else {
-				// 本來就在巡邏了
-				telegramBot.sendMessage(chatId, "通知已進行中");
+			// 登錄chatId，若巡邏為執行則觸發巡邏
+			if (command == "/start" && isAdmin) {
+				// 若 chatId 不在清單中，加進去
+				if (!isInActiveChatID) {
+					activeChatIDs.push(chatId);
+					console.log("新增使用者：" + chatId + "，目前使用者：" + activeChatIDs);
+				}
+
+				// 若原本沒在執行中，觸發巡邏並更改執行狀態
+				if (!isPatrolling) {
+					// 觸發第一次巡邏
+					event.emit("patrol");
+					// 更改執行狀態
+					isPatrolling = true;
+					telegramBot.sendMessage(chatId, "管理員啟動通知");
+				} else {
+					// 本來就在巡邏了
+					telegramBot.sendMessage(chatId, "通知已進行中");
+				}
 			}
-		}
 
-		// 從清單中移除chatId，該chatId將不再被通知
-		if (command == "/stop" && isAdmin) {
-			// 從 activeChatIDs 中移除
-			var index = activeChatIDs.indexOf(chatId);
-			if (index >= 0) {
-				activeChatIDs.splice(index, 1);
+			// 從清單中移除chatId，該chatId將不再被通知
+			if (command == "/stop" && isAdmin) {
+				// 從 activeChatIDs 中移除
+				var index = activeChatIDs.indexOf(chatId);
+				if (index >= 0) {
+					activeChatIDs.splice(index, 1);
+				}
+
+				telegramBot.sendMessage(chatId, "管理員停止通知");
 			}
 
-			telegramBot.sendMessage(chatId, "管理員停止通知");
-		}
-
-		// 判斷有在ActiveChatID才能使用，才不會被路人亂加機器人好用亂用
-		if (command == "/getmap" && isInActiveChatID) {
-			// 取得附近寶可夢的地圖圖檔
-			event.emit("getmap", chatId);
+			// 判斷有在ActiveChatID才能使用，才不會被路人亂加機器人好用亂用
+			if (command == "/getmap" && isInActiveChatID) {
+				// 取得附近寶可夢的地圖圖檔
+				event.emit("getmap", chatId);
+			}
 		}
 	});
 
