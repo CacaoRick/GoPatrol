@@ -2,14 +2,14 @@
 以指定的位置為中心進行巡邏尋找附近的寶可夢，利用 Telegram bot 送出通知給使用者、頻道或群組。使用 [pokespotter](https://github.com/brentschooley/pokespotter) 與 [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) Node.js API 製作。
 
 # 使用說明
-需使用 [Node.js](https://nodejs.org/en/) 與 [npm](https://www.npmjs.com/)。
+需先安裝 [Node.js 6.4.0↑](https://nodejs.org/en/)
 
 1. 下載 zip 檔解壓縮（右上角綠色 Clone or downloa 按鈕 > Download ZIP），或是用 git clone
 2. 使用 Node.js command prompt 或其他 Terminal 軟體，cd 到 GoPatrol 目錄下
-2. 執行 `npm install` 安裝所需的 module
-3. 複製一份 `example_config.js` 改名為 `config.js`
-4. 以文字編輯器開啟 `config.js` 編輯設定檔
-5. 執行 `node index.js`
+2. 執行命令 `npm install` 安裝所需的 module
+3. 將資料夾中的 `example_config.js` 複製一份改名為 `config.js`
+4. 以文字編輯器開啟 `config.js` 編輯設定檔（建議使用[nodepad++](https://notepad-plus-plus.org/download/v6.9.2.html)等文字編輯器開啟）
+5. 執行命令 `node index.js`
 
 廣播頻道模式會自動開始巡邏。機器人模式需在聊天中送出 `/start` 指令以開始巡邏。
 
