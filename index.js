@@ -25,7 +25,7 @@ class TelegramBotWithVenus extends TelegramBot {
 const event = new EventEmitter();
 var telegramBot = new TelegramBotWithVenus(config.telegramBotToken, { polling: true });
 var pokespotter = Pokespotter(config.account);
-pokespotter.DEBUG = true;
+pokespotter.DEBUG = false;
 
 var blacklist = config.blacklist;
 var centerLocation = config.initCenterLocation;
@@ -83,20 +83,14 @@ event.on("patrol", function() {
 		// 檢查 pokemons 中的每隻寶可夢剩餘時間
 		event.emit("checkLastTime");
 	}).catch(function(err) {
-		console.error("錯誤");
+		console.error("錯誤，將在 10 秒後重新啟動");
 		console.error(err);
-
-		// 通知使用者
-		activeChatIDs.forEach(function(id) {
-			telegramBot.sendMessage(id, "伺服器遇到錯誤，停止執行");
-		});
-
-		if (channelID == null) {
-			// 將使用者移除
-			activeChatIDs = [];
-			// 更改執行狀態
-			isPatrolling = false;
-		}
+		pokespotter = null;
+		
+		setTimeout(function() {
+			pokespotter = Pokespotter(config.account);
+			event.emit("patrol");	
+		}, 10000);
 	});
 });
 
