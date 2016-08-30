@@ -45,8 +45,8 @@ module.exports = {
 	 * 可利用 google map 等工具查詢想要的位置，網址中會有緯度與精度可以複製來用
 	 */
 	initCenterLocation: {
-		latitude: 25.0339031,
-		longitude: 121.5623212
+		latitude: 25.000000,
+		longitude: 121.000000
 	},
 
 	/**
