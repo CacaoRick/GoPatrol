@@ -4,6 +4,12 @@
 
 作者 Telegram [@CacaoRick](http://telegram.me/CacaoRick)，問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)。
 
+## 下載
+
+目前最新版本為 v1.0.1b
+[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1b/GoPatrol-win-x64.zip)
+[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1b/GoPatrol-mac.zip)
+
 ## 目錄
 
 - [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
