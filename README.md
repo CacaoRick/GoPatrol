@@ -6,18 +6,14 @@
 
 問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)討論
 
-# 使用說明
-
 ## 目錄
 
 - [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
 - [建立 Telegram 機器人](https://github.com/CacaoRick/GoPatrol#建立-telegram-機器人)
 - [使用廣播頻道模式](https://github.com/CacaoRick/GoPatrol#使用廣播頻道模式)
-- [使用機器人模式]()
-- [使用群組機器人模式]()
-- [機器人指令說明]()
-
-
+- [使用機器人模式](https://github.com/CacaoRick/GoPatrol#使用機器人模式)
+- [使用群組機器人模式](https://github.com/CacaoRick/GoPatrol#使用群組機器人模式)
+- [機器人指令說明](https://github.com/CacaoRick/GoPatrol#機器人指令說明)
 
 ## 啟動伺服器
 1. 到 [Release](https://github.com/CacaoRick/GoPatrol/releases) 頁面根據作業系統下載對應的 zip 檔
@@ -83,10 +79,10 @@
 - `/status` 取得伺服器狀態
 - 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
 
-# 警告
+## 警告
 用這個一定有被BAN的風險，使用前自己考慮要不要用，請勿使用主帳號登入！
 
-# DEMO截圖
+## 截圖
 Telegram Desktop
 
 ![Mac Demo](screenshot/MacDemo.png)
