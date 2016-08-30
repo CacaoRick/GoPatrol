@@ -29,6 +29,8 @@ var activeChatIDs = [];			// 啟動中的 Telegram ChatID
 
 if (config.telegramChannelID != null) {
 	console.log("廣播模式啟動\n");
+	telegramBot.sendMessage(config.telegramChannelID, "伺服器啟動，開始巡邏與通知");
+
 	// 將頻道ID存入 activeChatIDs
 	activeChatIDs = [config.telegramChannelID];
 	// 觸發第一次巡邏
@@ -37,6 +39,7 @@ if (config.telegramChannelID != null) {
 	isPatrolling = true;
 } else {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
+
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
 		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
