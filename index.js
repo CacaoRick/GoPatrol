@@ -24,7 +24,11 @@ class TelegramBotWithVenus extends TelegramBot {
 
 const event = new EventEmitter();
 var telegramBot = new TelegramBotWithVenus(config.telegramBotToken, { polling: true });
-var pokespotter = Pokespotter(config.account);
+var pokespotters = [];	// 儲存 Spotter 用
+// 建立第一個 Spotter
+pokespotters[0] = Pokespotter(config.account);
+var runningSpotterId = 0;
+var isWattingRestart = false;
 
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var blacklist = config.blacklist;	// 寶可夢黑名單
@@ -40,11 +44,12 @@ var pokemons = [];			// 儲存的寶可夢
 var activeChatIDs = [];		// 啟動中的 Telegram ChatID
 
 // 巡邏
-event.on("patrol", function() {
-	// 執行 pokespotter 尋找附近寶可夢
+event.on("patrol", function(thisSpotterId) {
+
+	// 執行 spotter 尋找附近寶可夢
 	spotterOptional.currentTime = Date.now();
 	console.log("------------------------- 開始巡邏 " + getHHMMSS(spotterOptional.currentTime) + " -------------------------");
-	pokespotter.get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
+	pokespotters[runningSpotterId].get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
 
 		//console.log("找到 #", np.pokemonId, pokemonNames[np.pokemonId], np.spawnPointId, getHHMMSS(np.expirationTime));
 		var newPokemonCount = 0;
@@ -73,25 +78,30 @@ event.on("patrol", function() {
 			}
 		});
 
-		console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻");
+		// 確認 Spotter 沒死才送訊息
+		if (thisSpotterId == runningSpotterId) {
+			console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻");
+		}
 
 		// 檢查 pokemons 中的每隻寶可夢剩餘時間
-		event.emit("checkLastTime");
+		event.emit("checkLastTime", thisSpotterId);
+
 	}).catch(function(err) {
-		console.error("錯誤，將在 10 秒後重新啟動");
+		console.error("@@錯誤@@");
 		console.error(err);
-		pokespotter = null;
-		
-		setTimeout(function() {
-			pokespotter = Pokespotter(config.account);
-			event.emit("patrol");	
-		}, 10000);
+
+		// 不在重啟中狀態，可以重新啟動。若使已再重啟就不用管了等他啟動就好
+		if (!isWattingRestart) {
+			restart();
+		}
 	});
 });
 
 // 檢查 pokemons 中的每隻寶可夢剩餘時間，若未到期且尚未通知則執行通知，若到期則刪除
-event.on("checkLastTime", function() {
-	for (var i = pokemons.length - 1; i >= 0; i--) {
+event.on("checkLastTime", function(thisSpotterId) {
+	// 檢查ID正確才繼續跑，否則代表這個 Spotter 已經死了
+	if (thisSpotterId == runningSpotterId) {
+		for (var i = pokemons.length - 1; i >= 0; i--) {
 		var lastTime = getLastTime(pokemons[i].expirationTime);
 		if (lastTime > 0) {
 			// 尚未結束，確認是否未通知
@@ -107,7 +117,8 @@ event.on("checkLastTime", function() {
 	}
 
 	// 判斷是否還有人在使用，有的話繼續下一次巡邏，否則不再觸發巡邏
-	doNextPatrol();
+	doNextPatrol(thisSpotterId);
+	}
 });
 
 // 將寶可夢通知給所有啟動中的使用者
@@ -232,6 +243,17 @@ if (channelID != null) {
 				// 取得附近寶可夢的地圖圖檔
 				event.emit("getmap", chatId);
 			}
+
+			// 強制重啟
+			if (command == "/restart" && isAdmin) {
+				if (isWattingRestart) {
+					// 已經再重啟中了
+					telegramBot.sendMessage(chatId, "正在重啟中");
+				} else {
+					// 不在重啟中狀態，可以重新啟動
+					restart();
+				}
+			}
 		}
 	});
 
@@ -265,15 +287,38 @@ function sendPokemon(chatId, pokemon, lastTime) {
 }
 
 // 判斷是否還有人在使用，有的話繼續下一次巡邏，否則不在觸發巡邏
-function doNextPatrol() {
+function doNextPatrol(thisSpotterId) {
+	// 確認還有人在用
 	if (activeChatIDs.length > 0) {
-		// 觸發下一次巡邏
-		event.emit("patrol");
+		if (thisSpotterId == runningSpotterId) {
+			// Spotter 沒死掉 觸發下一次巡邏
+			event.emit("patrol", runningSpotterId);	
+		} else {
+			console.log("thisSpotterId = " + thisSpotterId);
+			console.log("runningSpotterId = " + runningSpotterId);
+		}
 	} else {
 		// 更改執行狀態
 		isPatrolling = false;
 		console.log("無使用者，已停止巡邏");
 	}
+}
+
+// 遇到錯誤或呼叫 /restart 時使用
+function restart() {
+	isWattingRestart = true;	// 設為重啟中狀態，避免重複呼叫指令造成多個 Spotter 被啟動
+	runningSpotterId = runningSpotterId + 1;	// 更新執行中的 Spotter Id
+	pokespotters[runningSpotterId] = null;		// 捨棄舊的 Spotter
+	
+	
+	console.log("10秒後重新開使巡邏");
+	setTimeout(function() {
+		// 建立下一個 Spotter
+		pokespotters[runningSpotterId] = Pokespotter(config.account);
+		// 觸發巡邏
+		event.emit("patrol", runningSpotterId);
+		isWattingRestart = false;	// 取消啟動中狀態
+	}, 10000);
 }
 
 // 取得剩餘時間 timestamps，若為負數表示已結束
