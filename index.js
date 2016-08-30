@@ -200,6 +200,7 @@ if (channelID != null) {
 				if (!isInActiveChatID) {
 					activeChatIDs.push(chatId);
 					console.log("新增使用者：" + chatId + "，目前使用者：" + activeChatIDs);
+					telegramBot.sendMessage(chatId, "管理員啟動通知");
 				}
 
 				// 若原本沒在執行中，觸發巡邏並更改執行狀態
@@ -208,10 +209,10 @@ if (channelID != null) {
 					event.emit("patrol");
 					// 更改執行狀態
 					isPatrolling = true;
-					telegramBot.sendMessage(chatId, "管理員啟動通知");
+					telegramBot.sendMessage(chatId, "開使巡邏");
 				} else {
 					// 本來就在巡邏了
-					telegramBot.sendMessage(chatId, "通知已進行中");
+					telegramBot.sendMessage(chatId, "巡邏進行中");
 				}
 			}
 
