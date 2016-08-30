@@ -10,11 +10,11 @@
 
 ## 目錄
 
-- [啟動伺服器]()
+- [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
 - [建立 Telegram 機器人](https://github.com/CacaoRick/GoPatrol#建立-telegram-機器人)
-- [廣播頻道模式]()
-- [機器人模式]()
-- [群組機器人模式]()
+- [使用廣播頻道模式](https://github.com/CacaoRick/GoPatrol#使用廣播頻道模式)
+- [使用機器人模式]()
+- [使用群組機器人模式]()
 - [機器人指令說明]()
 
 
@@ -34,7 +34,7 @@
 
 ![Create Bot](tutorial/bot.png)
 
-## 廣播頻道模式
+## 使用廣播頻道模式
 程式單純的將找到的寶可夢廣播至該頻道中，沒有指令功能。
 
 1. 在 Telegram 建立頻道 (New Channel)
@@ -48,7 +48,7 @@
 
 3. 在 `config.js` 中將你的頻道ID前面加上`@`填入 `telegramChannelID`
 
-## 機器人模式
+## 使用機器人模式
 可對機器人下指令來操控伺服器，發現寶可夢時會通知到與機器人的聊天對話中。
 
 1. 將機器人加為好友
@@ -56,7 +56,7 @@
 3. 將 `config.json` 中的 `telegramChannelID` 設為 `null`
 4. 啟動伺服器後，在你與機器人的聊天中輸入 `/run` 就會開始巡邏和通知
 
-## 群組機器人模式
+## 使用群組機器人模式
 將機器人邀請進入群組中，供大家一起使用，並且將發現的寶可夢通知到群組中。
 
 1. 找 `@BotFather` 下達 `/setjoingroups` 指令
