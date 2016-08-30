@@ -1,5 +1,5 @@
 @echo off
-echo node.js version:
+echo node version:
 node -v
 node index.js
 pause
