@@ -56,14 +56,17 @@ if (config.telegramChannelID != null) {
 				telegramBot.sendMessage(
 					chatId,
 					"說明：\n" +
-					"以指定的位置為中心進行巡邏（範圍約半徑100多公尺），將遇到的寶可夢通知給使用者\n" +
+					"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
 					"一般指令：\n" +
 					"/getmap 取得附近寶可夢地圖\n\n" +
 					"管理員專用：\n" + 
 					"/help 查看說明\n" +
-					"/run 開始巡邏\n" +
-					"/stop 停止巡邏\n" +
-					"傳送位置訊息可更改巡邏中心位置"
+					"/run 開始巡邏和通知\n" +
+					"/stop 停止巡邏和通知\n" +
+					"/restart 強制重啟巡邏\n" +
+					"/status 取得伺服器狀態\n" +
+					"傳送位置訊息可更改巡邏中心位置\n\n" +
+					"首頁：https://github.com/CacaoRick/GoPatrol"
 				);
 			}
 
