@@ -27,128 +27,6 @@ var isPatrolling = false;		// 巡邏執行狀態
 var pokemons = [];				// 儲存的寶可夢
 var activeChatIDs = [];			// 啟動中的 Telegram ChatID
 
-if (config.telegramChannelID != null) {
-	console.log("廣播模式啟動\n");
-	telegramBot.sendMessage(config.telegramChannelID, "伺服器啟動，開始巡邏與通知");
-
-	// 將頻道ID存入 activeChatIDs
-	activeChatIDs = [config.telegramChannelID];
-	// 觸發第一次巡邏
-	event.emit("patrol", runningSpotterId);
-	// 更改執行狀態
-	isPatrolling = true;
-} else {
-	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
-
-	// Bot 收到訊息，處理指令
-	telegramBot.on("message", function(msg) {
-		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
-		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
-		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;	// chatId是否在 activeChatIDs 中，用來判斷是不是路人亂+BOT
-		var command = "";	// 用來儲存指令
-
-		// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
-		if (typeof msg.text !== "undefined") {
-			command = msg.text.split("@")[0];	// 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
-			
-			// 發送說明
-			if (command == "/help") {
-				telegramBot.sendMessage(
-					chatId,
-					"說明：\n" +
-					"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
-					"一般指令：\n" +
-					"/getmap 取得附近寶可夢地圖\n\n" +
-					"管理員專用：\n" + 
-					"/help 查看說明\n" +
-					"/run 開始巡邏和通知\n" +
-					"/stop 停止巡邏和通知\n" +
-					"/restart 強制重啟巡邏\n" +
-					"/status 取得伺服器狀態\n" +
-					"傳送位置訊息可更改巡邏中心位置\n\n" +
-					"首頁：https://github.com/CacaoRick/GoPatrol"
-				);
-			}
-
-			// 登錄chatId，若巡邏未執行則觸發巡邏
-			if (command == "/run" && isAdmin) {
-				// 若 chatId 不在清單中，加進去
-				if (!isInActiveChatID) {
-					activeChatIDs.push(chatId);
-					telegramBot.sendMessage(chatId, "管理員已啟動通知");
-				}
-
-				// 若原本沒在執行中，觸發巡邏並更改執行狀態
-				if (!isPatrolling) {
-					// 觸發第一次巡邏
-					event.emit("patrol", runningSpotterId);
-					// 更改執行狀態
-					isPatrolling = true;
-					telegramBot.sendMessage(chatId, "開始巡邏");
-				} else {
-					// 本來就在巡邏了
-					telegramBot.sendMessage(chatId, "巡邏進行中");
-				}
-			}
-
-			// 從清單中移除chatId，該chatId將不再被通知
-			if (command == "/stop" && isAdmin) {
-				// 從 activeChatIDs 中移除
-				var index = activeChatIDs.indexOf(chatId);
-				if (index >= 0) {
-					activeChatIDs.splice(index, 1);
-				}
-
-				telegramBot.sendMessage(chatId, "管理員已停止通知");
-			}
-
-			// 強制重啟
-			if (command == "/restart" && isAdmin) {
-				if (!isPatrolling) {
-					// 巡邏未啟動
-					telegramBot.sendMessage(chatId, "巡邏尚未啟動");
-				} else if (isWattingRestart) {
-					// 已經再重啟中了
-					telegramBot.sendMessage(chatId, "正在重啟中");
-				} else {
-					// 不在重啟中狀態，可以重新啟動
-					restart();
-				}
-			}
-
-			// 接收狀態
-			if (command == "/status" && isAdmin) {
-				telegramBot.sendMessage(chatId,
-					"伺服器狀態\n" +
-					"巡邏中：" + isPatrolling + "\n" +
-					"帳號數量：" + config.account.length + "\n" +
-					"巡邏範圍：" + config.searchSteps * 100 + "m\n" +
-					"巡邏重啟次數：" + runningSpotterId + "\n" +
-					"伺服器啟動日期：" + initDate.getFullYear() + "-" + initDate.getMonth() + "-" + initDate.getDate() + " " + getHHMMSS(initDate)
-				);
-
-				telegramBot.sendVenue(chatId, centerLocation.latitude, centerLocation.longitude, "目前巡邏中心位置", "");
-			}
-
-			// 判斷有在 ActiveChatID 陣列中才能使用，才不會被路人亂+BOT亂用
-			if (command == "/getmap" && isInActiveChatID) {
-				// 取得附近寶可夢的地圖圖檔
-				event.emit("getmap", chatId);
-			}
-		}
-	});
-
-	telegramBot.on("location", function(msg) {
-		// 判斷是否為管理員
-		if (telegramAdminUsernames.indexOf(msg.from.username) >= 0) {
-			// 更改座標
-			centerLocation = msg.location;
-			// 通知
-			telegramBot.sendMessage(msg.chat.id, "已更改巡邏中心位置");
-		}
-	});
-}
-
 // 巡邏
 event.on("patrol", function(thisSpotterId) {
 
@@ -298,6 +176,128 @@ event.on("getmap", function(chatId) {
 		telegramBot.sendMessage(chatId, "目前無資料");
 	}
 });
+
+if (config.telegramChannelID != null) {
+	console.log("廣播模式啟動\n");
+	telegramBot.sendMessage(config.telegramChannelID, "伺服器啟動，開始巡邏與通知");
+
+	// 將頻道ID存入 activeChatIDs
+	activeChatIDs = [config.telegramChannelID];
+	// 觸發第一次巡邏
+	event.emit("patrol", runningSpotterId);
+	// 更改執行狀態
+	isPatrolling = true;
+} else {
+	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
+
+	// Bot 收到訊息，處理指令
+	telegramBot.on("message", function(msg) {
+		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
+		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
+		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;	// chatId是否在 activeChatIDs 中，用來判斷是不是路人亂+BOT
+		var command = "";	// 用來儲存指令
+
+		// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
+		if (typeof msg.text !== "undefined") {
+			command = msg.text.split("@")[0];	// 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
+			
+			// 發送說明
+			if (command == "/help") {
+				telegramBot.sendMessage(
+					chatId,
+					"說明：\n" +
+					"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
+					"一般指令：\n" +
+					"/getmap 取得附近寶可夢地圖\n\n" +
+					"管理員專用：\n" + 
+					"/help 查看說明\n" +
+					"/run 開始巡邏和通知\n" +
+					"/stop 停止巡邏和通知\n" +
+					"/restart 強制重啟巡邏\n" +
+					"/status 取得伺服器狀態\n" +
+					"傳送位置訊息可更改巡邏中心位置\n\n" +
+					"首頁：https://github.com/CacaoRick/GoPatrol"
+				);
+			}
+
+			// 登錄chatId，若巡邏未執行則觸發巡邏
+			if (command == "/run" && isAdmin) {
+				// 若 chatId 不在清單中，加進去
+				if (!isInActiveChatID) {
+					activeChatIDs.push(chatId);
+					telegramBot.sendMessage(chatId, "管理員已啟動通知");
+				}
+
+				// 若原本沒在執行中，觸發巡邏並更改執行狀態
+				if (!isPatrolling) {
+					// 觸發第一次巡邏
+					event.emit("patrol", runningSpotterId);
+					// 更改執行狀態
+					isPatrolling = true;
+					telegramBot.sendMessage(chatId, "開始巡邏");
+				} else {
+					// 本來就在巡邏了
+					telegramBot.sendMessage(chatId, "巡邏進行中");
+				}
+			}
+
+			// 從清單中移除chatId，該chatId將不再被通知
+			if (command == "/stop" && isAdmin) {
+				// 從 activeChatIDs 中移除
+				var index = activeChatIDs.indexOf(chatId);
+				if (index >= 0) {
+					activeChatIDs.splice(index, 1);
+				}
+
+				telegramBot.sendMessage(chatId, "管理員已停止通知");
+			}
+
+			// 強制重啟
+			if (command == "/restart" && isAdmin) {
+				if (!isPatrolling) {
+					// 巡邏未啟動
+					telegramBot.sendMessage(chatId, "巡邏尚未啟動");
+				} else if (isWattingRestart) {
+					// 已經再重啟中了
+					telegramBot.sendMessage(chatId, "正在重啟中");
+				} else {
+					// 不在重啟中狀態，可以重新啟動
+					restart();
+				}
+			}
+
+			// 接收狀態
+			if (command == "/status" && isAdmin) {
+				telegramBot.sendMessage(chatId,
+					"伺服器狀態\n" +
+					"巡邏中：" + isPatrolling + "\n" +
+					"帳號數量：" + config.account.length + "\n" +
+					"巡邏範圍：" + config.searchSteps * 100 + "m\n" +
+					"巡邏重啟次數：" + runningSpotterId + "\n" +
+					"伺服器啟動日期：" + initDate.getFullYear() + "-" + initDate.getMonth() + "-" + initDate.getDate() + " " + getHHMMSS(initDate)
+				);
+
+				telegramBot.sendVenue(chatId, centerLocation.latitude, centerLocation.longitude, "目前巡邏中心位置", "");
+			}
+
+			// 判斷有在 ActiveChatID 陣列中才能使用，才不會被路人亂+BOT亂用
+			if (command == "/getmap" && isInActiveChatID) {
+				// 取得附近寶可夢的地圖圖檔
+				event.emit("getmap", chatId);
+			}
+		}
+	});
+
+	telegramBot.on("location", function(msg) {
+		// 判斷是否為管理員
+		if (telegramAdminUsernames.indexOf(msg.from.username) >= 0) {
+			// 更改座標
+			centerLocation = msg.location;
+			// 通知
+			telegramBot.sendMessage(msg.chat.id, "已更改巡邏中心位置");
+		}
+	});
+}
 
 // 判斷是否還有人在使用，有的話繼續下一次巡邏，否則不在觸發巡邏
 function prepareNextPatrol(thisSpotterId) {
