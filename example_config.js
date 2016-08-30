@@ -50,6 +50,13 @@ module.exports = {
 	},
 
 	/**
+	 * 自動重啟時間（秒）
+	 * 巡邏中卡住多久要重新啟動
+	 * 建議先跑跑看你的搜尋範圍找一次要多久，再加一些時間來作為 autoRestartTime
+	 */
+	autoRestartTime: 60,
+
+	/**
 	 * 搜尋範圍
 	 * 範圍大約是這個數字*100公尺為半徑，設越大要找越久
 	 * 可設定更多帳號來減少搜尋時間，但同IP用太多帳號會被 BAN IP
@@ -57,11 +64,11 @@ module.exports = {
 	searchSteps: 2,
 
 	/**
-	 * 搜尋延遲
+	 * 搜尋延遲（秒）
 	 * 移動後停留在一個位置的時間，若 searchSteps 為 1 可以設為 0
 	 * searchSteps > 1 建議要設定 1000 豪秒以上，不然有些寶可夢還沒被發現你就跑走了
 	 */
-	searchDelay: 1000,
+	searchDelay: 1,
 
 	/**
 	 * 寶可夢黑名單
