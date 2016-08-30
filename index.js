@@ -104,7 +104,10 @@ if (config.telegramChannelID != null) {
 
 			// 強制重啟
 			if (command == "/restart" && isAdmin) {
-				if (isWattingRestart) {
+				if (!isPatrolling) {
+					// 巡邏未啟動
+					telegramBot.sendMessage(chatId, "巡邏尚未啟動");
+				} else if (isWattingRestart) {
 					// 已經再重啟中了
 					telegramBot.sendMessage(chatId, "正在重啟中");
 				} else {
