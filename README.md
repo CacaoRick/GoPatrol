@@ -7,6 +7,18 @@
 問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)討論
 
 # 使用說明
+
+## 目錄
+
+- [啟動伺服器]()
+- [建立 Telegram 機器人](https://github.com/CacaoRick/GoPatrol#建立-telegram-機器人)
+- [廣播頻道模式]()
+- [機器人模式]()
+- [群組機器人模式]()
+- [機器人指令說明]()
+
+
+
 ## 啟動伺服器
 1. 到 [Release](https://github.com/CacaoRick/GoPatrol/releases) 頁面根據作業系統下載對應的 zip 檔
 2. 解壓縮後將資料夾中的 `example_config.js` 複製一份改名為 `config.js`
