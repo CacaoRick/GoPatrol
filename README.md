@@ -8,12 +8,25 @@
 
 ## 目錄
 
+- [機器人指令說明](https://github.com/CacaoRick/GoPatrol#機器人指令說明)
 - [建立 Telegram 機器人](https://github.com/CacaoRick/GoPatrol#建立-telegram-機器人)
 - [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
 - [使用廣播頻道模式](https://github.com/CacaoRick/GoPatrol#使用廣播頻道模式)
 - [使用機器人模式](https://github.com/CacaoRick/GoPatrol#使用機器人模式)
 - [使用群組機器人模式](https://github.com/CacaoRick/GoPatrol#使用群組機器人模式)
-- [機器人指令說明](https://github.com/CacaoRick/GoPatrol#機器人指令說明)
+
+## 機器人指令說明
+
+- `/help` 查看說明
+- `/getmap` 取得附近寶可夢地圖
+
+以下指令限管理員使用：
+
+- `/run` 開始巡邏和通知
+- `/stop` 停止巡邏和通知
+- `/restart` 強制重啟巡邏
+- `/status` 取得伺服器狀態
+- 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
 
 ## 建立 Telegram 機器人
 1. 在 Telegram 中搜尋 `@BotFather`
@@ -65,19 +78,6 @@
 5. 將 `config.json` 中的 `telegramAdminUsernames` 填入你的使用者名稱(username)
 6. 將 `config.json` 中的 `telegramChannelID` 設為 `null`
 7. 啟動伺服器後，在群組中輸入 `/run` 就會開始巡邏和通知
-
-## 機器人指令說明
-
-- `/help` 查看說明
-- `/getmap` 取得附近寶可夢地圖
-
-以下指令限管理員使用：
-
-- `/run` 開始巡邏和通知
-- `/stop` 停止巡邏和通知
-- `/restart` 強制重啟巡邏
-- `/status` 取得伺服器狀態
-- 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
 
 ## 警告
 用這個一定有被BAN的風險，使用前自己考慮要不要用，請勿使用主帳號登入！
