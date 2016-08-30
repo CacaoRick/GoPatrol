@@ -7,6 +7,7 @@
 ## 下載
 
 目前最新版本為 v1.0.1b
+
 [Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1b/GoPatrol-win-x64.zip)
 
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1b/GoPatrol-mac.zip)
