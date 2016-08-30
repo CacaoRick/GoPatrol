@@ -24,18 +24,19 @@ class TelegramBotWithVenus extends TelegramBot {
 
 const event = new EventEmitter();
 var telegramBot = new TelegramBotWithVenus(config.telegramBotToken, { polling: true });
-var pokespotters = [];	// 儲存 Spotter 用
+var pokespotters = [];			// 儲存 Spotter 用
 // 建立第一個 Spotter
 pokespotters[0] = Pokespotter(config.account);
-var runningSpotterId = 0;
-var isWattingRestart = false;
+pokespotters[0].runCount = 0;	// 記錄 Spotter 執行次數，用來確認是不是卡住了
+var runningSpotterId = 0;		// 記錄目前 Spotter 的 Id，用來確認 Spotter 存活狀態
+var isWattingRestart = false;	// 正在重啟中，用來確保不要重複重啟
 
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var blacklist = config.blacklist;	// 寶可夢黑名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
 var spotterOptional = {
 	steps: config.searchSteps,			// 搜尋範圍
-	requestDelay: config.searchDelay,	// 搜尋延遲
+	requestDelay: config.searchDelay * 1000,	// 搜尋延遲
 	currentTime: Date.now()
 }
 
@@ -48,8 +49,29 @@ event.on("patrol", function(thisSpotterId) {
 
 	// 執行 spotter 尋找附近寶可夢
 	spotterOptional.currentTime = Date.now();
-	console.log("------------------------- 開始巡邏 " + getHHMMSS(spotterOptional.currentTime) + " -------------------------");
-	pokespotters[runningSpotterId].get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
+	console.log("------------------------- " + thisSpotterId + " 開始巡邏 " + getHHMMSS(spotterOptional.currentTime) + " -------------------------");
+
+	// 將 runCount 儲存為區域變數
+	var runCount = pokespotters[thisSpotterId].runCount;
+	// 計時開始，根據設定檔中的 autoRestartTime，時間到以後檢查執行狀態，若還在執行中就當作他卡住了
+	setTimeout(function (thisSpotterId, runCount) {
+		// 確認還沒死掉，死了就不管了
+		if (thisSpotterId == runningSpotterId) {
+			// 檢查是否還在同一次執行
+			if (runCount == pokespotters[thisSpotterId].runCount) {
+				// 是，懷疑他卡住了
+				// 若不在重啟中狀態，可以重新啟動。若使已再重啟就不用管了等他啟動就好
+				if (!isWattingRestart) {
+					console.log(getHHMMSS(Date.now()) + " " + thisSpotterId + " 過了" + config.autoRestartTime + "秒，好像卡住了？執行重啟");
+					restart();
+				}	
+			}	
+		}
+	}, config.autoRestartTime * 1000);
+
+	pokespotters[thisSpotterId].get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
+		// 有跑進來表示沒卡住，把執行次數+1
+		pokespotters[thisSpotterId].runCount++;
 
 		//console.log("找到 #", np.pokemonId, pokemonNames[np.pokemonId], np.spawnPointId, getHHMMSS(np.expirationTime));
 		var newPokemonCount = 0;
@@ -87,7 +109,7 @@ event.on("patrol", function(thisSpotterId) {
 		event.emit("checkLastTime", thisSpotterId);
 
 	}).catch(function(err) {
-		console.error("@@錯誤@@");
+		console.error("遇到錯誤了");
 		console.error(err);
 
 		// 不在重啟中狀態，可以重新啟動。若使已再重啟就不用管了等他啟動就好
@@ -101,6 +123,7 @@ event.on("patrol", function(thisSpotterId) {
 event.on("checkLastTime", function(thisSpotterId) {
 	// 檢查ID正確才繼續跑，否則代表這個 Spotter 已經死了
 	if (thisSpotterId == runningSpotterId) {
+		console.log(getHHMMSS(Date.now()) + " 開始檢查結束時間並進行通知...");
 		for (var i = pokemons.length - 1; i >= 0; i--) {
 		var lastTime = getLastTime(pokemons[i].expirationTime);
 		if (lastTime > 0) {
@@ -176,7 +199,7 @@ if (channelID != null) {
 	// 將頻道ID存入 activeChatIDs
 	activeChatIDs = [channelID];
 	// 觸發第一次巡邏
-	event.emit("patrol");
+	event.emit("patrol", runningSpotterId);
 	// 更改執行狀態
 	isPatrolling = true;
 } else {
@@ -217,7 +240,7 @@ if (channelID != null) {
 				// 若原本沒在執行中，觸發巡邏並更改執行狀態
 				if (!isPatrolling) {
 					// 觸發第一次巡邏
-					event.emit("patrol");
+					event.emit("patrol", runningSpotterId);
 					// 更改執行狀態
 					isPatrolling = true;
 					telegramBot.sendMessage(chatId, "開使巡邏");
@@ -309,12 +332,12 @@ function restart() {
 	isWattingRestart = true;	// 設為重啟中狀態，避免重複呼叫指令造成多個 Spotter 被啟動
 	runningSpotterId = runningSpotterId + 1;	// 更新執行中的 Spotter Id
 	pokespotters[runningSpotterId] = null;		// 捨棄舊的 Spotter
-	
-	
+
 	console.log("10秒後重新開使巡邏");
 	setTimeout(function() {
 		// 建立下一個 Spotter
 		pokespotters[runningSpotterId] = Pokespotter(config.account);
+		pokespotters[runningSpotterId].runCount = 0;// 將執行次數歸零
 		// 觸發巡邏
 		event.emit("patrol", runningSpotterId);
 		isWattingRestart = false;	// 取消啟動中狀態
