@@ -27,7 +27,7 @@ module.exports = {
 	 * 填入使用者名稱，可設定多個使用者為管理者（注意，這裡不須@）
 	 * telegramAdminUsername: ["AdminUser1", "AdminUser2"], 
 	 */
-	telegramAdminUsernames: ["UserName"],
+	telegramAdminUsernames: ["管理者UserName"],
 
 	/**
      * 機器人模式（適合個人與群組使用），去掉引號填入 null
