@@ -8,18 +8,12 @@
 
 ## 目錄
 
-- [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
 - [建立 Telegram 機器人](https://github.com/CacaoRick/GoPatrol#建立-telegram-機器人)
+- [啟動伺服器](https://github.com/CacaoRick/GoPatrol#啟動伺服器)
 - [使用廣播頻道模式](https://github.com/CacaoRick/GoPatrol#使用廣播頻道模式)
 - [使用機器人模式](https://github.com/CacaoRick/GoPatrol#使用機器人模式)
 - [使用群組機器人模式](https://github.com/CacaoRick/GoPatrol#使用群組機器人模式)
 - [機器人指令說明](https://github.com/CacaoRick/GoPatrol#機器人指令說明)
-
-## 啟動伺服器
-1. 到 [Release](https://github.com/CacaoRick/GoPatrol/releases) 頁面根據作業系統下載對應的 zip 檔
-2. 解壓縮後將資料夾中的 `example_config.js` 複製一份改名為 `config.js`
-4. 以文字編輯器開啟 `config.js` 編輯設定檔（建議使用[nodepad++](https://notepad-plus-plus.org/download/v6.9.2.html)等文字編輯器開啟）
-5. 點兩下資料夾中的 `start.bat` 或 `start.command`
 
 ## 建立 Telegram 機器人
 1. 在 Telegram 中搜尋 `@BotFather`
@@ -29,6 +23,12 @@
 5. 將 BotFather 給你的 token 複製貼到 `config.js` 中的 `telegramBotToken`
 
 ![Create Bot](tutorial/bot.png)
+
+## 啟動伺服器
+1. 到 [Release](https://github.com/CacaoRick/GoPatrol/releases) 頁面根據作業系統下載對應的 zip 檔
+2. 解壓縮後將資料夾中的 `example_config.js` 複製一份改名為 `config.js`
+4. 以文字編輯器開啟 `config.js` 編輯設定檔（建議使用[nodepad++](https://notepad-plus-plus.org/download/v6.9.2.html)等文字編輯器開啟）
+5. 點兩下資料夾中的 `start.bat` 或 `start.command`
 
 ## 使用廣播頻道模式
 程式單純的將找到的寶可夢廣播至該頻道中，沒有指令功能。
