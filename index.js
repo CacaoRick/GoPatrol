@@ -336,7 +336,7 @@ if (config.telegramChannelID != null) {
 					"帳號數量：" + config.account.length + "\n" +
 					"巡邏範圍：" + config.searchSteps * 100 + "m\n" +
 					"巡邏重啟次數：" + runningSpotterId + "\n" +
-					"伺服器啟動日期：" + initDate.getFullYear() + "-" + initDate.getMonth() + "-" + initDate.getDate() + " " + getHHMMSS(initDate)
+					"伺服器啟動日期：" + initDate.getFullYear() + "-" + (initDate.getMonth() + 1) + "-" + initDate.getDate() + " " + getHHMMSS(initDate)
 				);
 
 				telegramBot.sendVenue(chatId, centerLocation.latitude, centerLocation.longitude, "目前巡邏中心位置", "");
