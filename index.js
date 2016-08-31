@@ -121,13 +121,12 @@ event.on("patrol", function(thisSpotterId) {
 			}
 		});
 
-		// 確認 Spotter 沒死才送訊息
-		if (thisSpotterId == runningSpotterId) {
+		// 確認 Spotter 沒死，且為執行中才送訊息
+		if (thisSpotterId == runningSpotterId && isPatrolling) {
 			console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻");
+			// 檢查 pokemons 中的每隻寶可夢剩餘時間
+			event.emit("checkLastTime", thisSpotterId);
 		}
-
-		// 檢查 pokemons 中的每隻寶可夢剩餘時間
-		event.emit("checkLastTime", thisSpotterId);
 
 	}).catch(function(err) {
 		console.error(getHHMMSS(Date.now()) + " 遇到錯誤了...");
@@ -371,10 +370,6 @@ function prepareNextPatrol(thisSpotterId) {
 			console.log("thisSpotterId = " + thisSpotterId);
 			console.log("runningSpotterId = " + runningSpotterId);
 		}
-	} else {
-		// 更改執行狀態
-		isPatrolling = false;
-		console.log("無使用者，已停止巡邏");
 	}
 }
 
