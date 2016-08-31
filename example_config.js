@@ -53,8 +53,9 @@ module.exports = {
 	 * 自動重啟時間（秒）
 	 * 巡邏中卡住多久要重新啟動
 	 * 建議先跑跑看你的搜尋範圍找一次要多久，再加一些時間來作為 autoRestartTime
+	 * 若不使用可設為 0
 	 */
-	autoRestartTime: 60,
+	autoRestartTime: 0,
 
 	/**
 	 * 搜尋範圍
@@ -75,5 +76,13 @@ module.exports = {
 	 * 設定後不會通知，編號可參考 pokemon_name.js
 	 * 範例：blacklist: [10, 13, 16, 19]
 	 */
-	blacklist: []
+	blacklist: [],
+
+	/**
+	 * Debug 輸出
+	 * 預設為關閉 (false)
+	 * 遇到問題時可以把他打開 (true)
+	 * 然後把訊息貼出來看看
+	 */
+	debug: false
 };
