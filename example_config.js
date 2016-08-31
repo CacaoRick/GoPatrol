@@ -53,7 +53,7 @@ module.exports = {
 	 * 自動重啟時間（秒）
 	 * 巡邏中卡住多久要重新啟動
 	 * 建議先跑跑看你的搜尋範圍找一次要多久，再加一些時間來作為 autoRestartTime
-	 * 若不使用可設為 0
+	 * 預設不使用，設為 0
 	 */
 	autoRestartTime: 0,
 
