@@ -8,6 +8,8 @@
 
 目前最新版本為 [v1.0.2](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.0.2)
 
+請注意 `config.js` 中的時間單位皆為**秒**。
+
 [Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2_win_x64.zip)
 
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2-mac.zip)
