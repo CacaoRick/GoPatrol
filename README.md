@@ -6,13 +6,21 @@
 
 ## 下載
 
-目前最新版本為 [v1.0.1c](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.0.1c)
+目前最新版本為 [v1.0.2](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.0.2)
 
-[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1c/GoPatrol-win-x64.zip)
+[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2_win_x64.zip)
 
-[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.1c/GoPatrol-mac.zip)
+[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2-mac.zip)
 
 ### 更新內容
+
+v1.0.2
+
+- 新增 `debug` 選項，設為 `true` 可以印出更多資訊
+- 修改 `autoRestartTime` 預設值為 0，設為 0 時不啟動卡住重啟功能
+- 改善巡邏卡住重啟功能
+
+v1.0.1
 
 - 新增管理者功能
 - 新增群組機器人功能
