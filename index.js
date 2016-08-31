@@ -1,5 +1,6 @@
 'use strict';
-console.log("Go Patrol v1.0.2");
+console.log("Go Patrol version:");
+console.log("v1.0.2");
 const config = require("./config.js");
 const pokemonNames = require("./pokemon_names.js");
 const TelegramBot = require("./telegramBot.js")
