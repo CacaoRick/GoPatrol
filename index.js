@@ -17,6 +17,10 @@ var spotterOptional = {
 	requestDelay: config.searchDelay * 1000,	// 搜尋延遲
 	currentTime: initDate
 }
+const debug = config.debug;
+if (debug) {
+	console.log("debug on.")
+}
 
 var pokespotters = [];			// 儲存 Spotter 用
 pokespotters[0] = Pokespotter(config.account);		// 建立第一個 Spotter
@@ -29,30 +33,63 @@ var activeChatIDs = [];			// 啟動中的 Telegram ChatID
 
 // 巡邏
 event.on("patrol", function(thisSpotterId) {
+	console.log("---------------------------------------------------------------------------\n");
+	if (debug) {
+		console.log("on patrol event.");
+	}
 
 	// 防止巡邏卡住
-	// 將 runCount 儲存為區域變數
-	var runCount = pokespotters[thisSpotterId].runCount;
-	// 計時開始，根據設定檔中的 autoRestartTime，時間到以後檢查執行狀態，若還在執行中就當作他卡住了
-	setTimeout(function (thisSpotterId, runCount) {
-		// 確認還沒死掉，死了就不管了
-		if (thisSpotterId == runningSpotterId) {
-			// 檢查是否還在同一次執行
-			if (runCount == pokespotters[thisSpotterId].runCount) {
-				// 是，懷疑他卡住了
-				// 若不在重啟中狀態，可以重新啟動。若使已再重啟就不用管了等他啟動就好
-				if (!isWattingRestart) {
-					console.log(getHHMMSS(Date.now()) + " " + thisSpotterId + " 過了" + config.autoRestartTime + "秒，好像卡住了？執行重啟");
-					restart();
-				}	
-			}	
-		}
-	}, config.autoRestartTime * 1000);
-
+	if (config.autoRestartTime != 0) {
+		// 將 runCount 儲存為區域變數
+		var runCount = pokespotters[thisSpotterId].runCount;
+		// 計時開始，根據設定檔中的 autoRestartTime，時間到以後檢查執行狀態，若還在執行中就當作他卡住了
+		setTimeout(function () {
+			// 有在巡邏中才檢查
+			if (isPatrolling) {
+				if (debug) {
+					console.log("====");
+					console.log("on timeout " + config.autoRestartTime + " seconds, check spotter status.");
+					console.log("chech SpotterId:" + thisSpotterId + " RunCount:" + runCount);
+					console.log("now SpotterId:" + runningSpotterId + " RunCount:" + pokespotters[thisSpotterId].runCount);
+				}
+				// 確認還沒死掉，死了就不管了
+				if (thisSpotterId == runningSpotterId) {
+					if (debug) {
+						console.log("spotter is alive.");
+					}
+					// 檢查是否還在同一次執行
+					if (runCount == pokespotters[thisSpotterId].runCount) {
+						if (debug) {
+							console.log("spotter is blocking.");
+							console.log("====\n");
+						}
+						// 是，懷疑他卡住了
+						// 若不在重啟中狀態，可以重新啟動。若使已再重啟就不用管了等他啟動就好
+						if (!isWattingRestart) {
+							console.log("[" + getHHMMSS(Date.now()) + "] 過了" + config.autoRestartTime + "秒還沒找完，好像卡住了？");
+							restart();
+						}	
+					} else if (debug) {
+						console.log("spotter not blocking.");
+						console.log("====\n");
+					}
+				} else if (debug) {
+					console.log("spotter is dead.");
+					console.log("====\n");
+				}
+			}
+		}, config.autoRestartTime * 1000);
+	}
 
 	// 開始巡邏
 	spotterOptional.currentTime = Date.now();
-	console.log("---------------------------------------------------------------------------\n");
+	
+	if (debug) {
+		console.log("thisSpotterId:" + thisSpotterId);
+		console.log("runningSpotterId:" + runningSpotterId);
+		console.log("thisSpotter runcount:" + pokespotters[thisSpotterId].runCount + "\n");
+	}
+
 	console.log("["+ getHHMMSS(spotterOptional.currentTime) + "] 開始巡邏...");
 	pokespotters[thisSpotterId].get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
 		// 有跑進來表示沒卡住，把執行次數+1
@@ -105,6 +142,10 @@ event.on("patrol", function(thisSpotterId) {
 
 // 檢查 pokemons 中的每隻寶可夢剩餘時間，若未到期且尚未通知則執行通知，若到期則刪除
 event.on("checkLastTime", function(thisSpotterId) {
+	if (debug) {
+		console.log("on checkLastTime event.");
+	}
+
 	// 檢查ID正確才繼續跑，否則代表這個 Spotter 已經死了
 	if (thisSpotterId == runningSpotterId) {
 		console.log("[" + getHHMMSS(Date.now()) + "] 開始檢查結束時間並進行通知...\n");
@@ -130,6 +171,9 @@ event.on("checkLastTime", function(thisSpotterId) {
 
 // 將寶可夢通知給所有啟動中的使用者
 event.on("informToActiveUsers", function(pokemon, lastTime) {
+	if (debug) {
+		console.log("on informToActiveUsers event.");
+	}
 	for (var i = 0; i < activeChatIDs.length; i++) {
 		sendPokemon(activeChatIDs[i], pokemon, lastTime);
 	}
@@ -137,6 +181,10 @@ event.on("informToActiveUsers", function(pokemon, lastTime) {
 
 // 畫地圖，傳給下指令者
 event.on("getmap", function(chatId) {
+	if (debug) {
+		console.log("on getmap event.");
+	}
+
 	if (pokemons.length > 0) {
 		telegramBot.sendMessage(chatId, "地圖製作中，請稍候...");
 		var mapUrl = Pokespotter.getMapsUrl(centerLocation, pokemons, "512x512");
@@ -192,8 +240,13 @@ if (config.telegramChannelID != null) {
 
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
+		if (debug) {
+			console.log("on message event.");
+			console.log(msg);
+		}
 		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
 		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
+		
 		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;	// chatId是否在 activeChatIDs 中，用來判斷是不是路人亂+BOT
 		var command = "";	// 用來儲存指令
 
@@ -222,6 +275,7 @@ if (config.telegramChannelID != null) {
 
 			// 登錄chatId，若巡邏未執行則觸發巡邏
 			if (command == "/run" && isAdmin) {
+				console.log(msg.from.username + ": " + command);
 				// 若 chatId 不在清單中，加進去
 				if (!isInActiveChatID) {
 					activeChatIDs.push(chatId);
@@ -243,17 +297,24 @@ if (config.telegramChannelID != null) {
 
 			// 從清單中移除chatId，該chatId將不再被通知
 			if (command == "/stop" && isAdmin) {
+				console.log(msg.from.username + ": " + command);
 				// 從 activeChatIDs 中移除
 				var index = activeChatIDs.indexOf(chatId);
 				if (index >= 0) {
 					activeChatIDs.splice(index, 1);
+					telegramBot.sendMessage(chatId, "管理員已停止通知");
 				}
-
-				telegramBot.sendMessage(chatId, "管理員已停止通知");
+				if (activeChatIDs.length == 0) {
+					// 沒人在收通知了，停止巡邏
+					isPatrolling = false;
+					telegramBot.sendMessage(chatId, "巡邏已停止");
+					console.log("無使用者，已停止巡邏");
+				}
 			}
 
 			// 強制重啟
 			if (command == "/restart" && isAdmin) {
+				console.log(msg.from.username + ": " + command);
 				if (!isPatrolling) {
 					// 巡邏未啟動
 					telegramBot.sendMessage(chatId, "巡邏尚未啟動");
@@ -302,7 +363,7 @@ if (config.telegramChannelID != null) {
 // 判斷是否還有人在使用，有的話繼續下一次巡邏，否則不在觸發巡邏
 function prepareNextPatrol(thisSpotterId) {
 	// 確認還有人在用
-	if (activeChatIDs.length > 0) {
+	if (activeChatIDs.length > 0 && isPatrolling) {
 		if (thisSpotterId == runningSpotterId) {
 			// Spotter 沒死掉 觸發下一次巡邏
 			event.emit("patrol", runningSpotterId);	
