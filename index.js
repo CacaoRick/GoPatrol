@@ -133,7 +133,7 @@ event.on("patrol", function(thisSpotterId) {
 
 		// 確認 Spotter 沒死，且為執行中才送訊息
 		if (thisSpotterId == runningSpotterId && isPatrolling) {
-			console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻");
+			console.log("本次巡邏發現 " + nearbyPokemons.length + " 隻，新增 " + newPokemonCount + " 隻，費時 " + getMMSS(Date.now() - spotterOptional.currentTime));
 			// 檢查 pokemons 中的每隻寶可夢剩餘時間
 			event.emit("checkLastTime", thisSpotterId);
 		}
@@ -361,6 +361,8 @@ if (config.telegramChannelID != null) {
 	telegramBot.on("location", function(msg) {
 		// 判斷是否為管理員
 		if (telegramAdminUsernames.indexOf(msg.from.username) >= 0) {
+			// 清空 pokemons
+			
 			// 更改座標
 			centerLocation = msg.location;
 			// 通知
