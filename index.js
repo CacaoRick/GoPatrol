@@ -11,6 +11,7 @@ const Pokespotter = require("pokespotter");
 const event = new EventEmitter();
 const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
 const initDate = new Date();
+var iconhost = "http://gopatrol.ass.tw/pixel_icons/";
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
 var whitelist = config.whitelist;	// 寶可夢白名單
@@ -196,7 +197,25 @@ event.on("getmap", function(chatId) {
 
 	if (pokemons.length > 0) {
 		telegramBot.sendMessage(chatId, "地圖製作中，請稍候...");
-		var mapUrl = Pokespotter.getMapsUrl(centerLocation, pokemons, "512x512");
+		var location = centerLocation.latitude + "," + centerLocation.longitude;
+		var zoom = 18 - spotterOptional.searchSteps;
+		var size = "512x512";
+		var markers = "";
+		var message = "";
+		pokemons.forEach(function(p) {
+			var lastTime = getLastTime(p.expirationTime);
+			if (lastTime > 0) {
+				markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+
+				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
+				"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+			}
+		});
+
+		var mapUrl = "http://maps.google.com/maps/api/staticmap?center=" + location +
+		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&sensor=false" + markers;
+
+		telegramBot.sendMessage(chatId, mapUrl);
 
 		// 將地圖圖檔下載傳給使用者
 		request({url:mapUrl, encoding:null}, function (error, response, body) {
@@ -204,21 +223,6 @@ event.on("getmap", function(chatId) {
 				var imageBuffer = Buffer.from(body);
 				// 將地圖傳給使用者
 				telegramBot.sendPhoto(chatId, imageBuffer);
-
-				var message = "";
-				var index = 1;
-				pokemons.forEach(function(p) {
-					var lastTime = getLastTime(p.expirationTime);
-					if (lastTime > 0) {
-						message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
-						" 剩餘:" + getMMSS(lastTime) + " 結束:" + getHHMMSS(p.expirationTime) + "\n";	
-					} else {
-						message = message + "[" + index + "] #" + p.pokemonId + " " + pokemonNames[p.pokemonId] + 
-						" 已結束:" + getHHMMSS(p.expirationTime) + "\n";	
-					}
-					
-					index++;
-				});
 
 				// 傳送寶可夢編號和資訊
 				telegramBot.sendMessage(chatId, message);
@@ -411,8 +415,6 @@ function sendPokemon(chatId, pokemon, lastTime) {
 		"剩餘 " + getMMSS(lastTime) + " 結束 " + getHHMMSS(pokemon.expirationTime)
 	);
 }
-
-
 
 // 取得剩餘時間 timestamps，若為負數表示已結束
 function getLastTime(endTime) {
