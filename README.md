@@ -4,6 +4,8 @@
 
 作者 Telegram [@CacaoRick](http://telegram.me/CacaoRick)，問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)。
 
+感謝`柯姊`提供 Icon host 與 `Joseph Tsai` 提供意見及部分程式碼。
+
 ## 下載
 
 目前最新版本為 [v1.0.2](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.0.2)
