@@ -197,23 +197,45 @@ event.on("getmap", function(chatId) {
 
 	if (pokemons.length > 0) {
 		telegramBot.sendMessage(chatId, "地圖製作中，請稍候...");
-		var location = centerLocation.latitude + "," + centerLocation.longitude;
-		var zoom = 18 - spotterOptional.searchSteps;
-		var size = "512x512";
-		var markers = "";
-		var message = "";
-		pokemons.forEach(function(p) {
-			var lastTime = getLastTime(p.expirationTime);
-			if (lastTime > 0) {
-				markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+		// 照ID排列
+		var mapPokemon = pokemons;
+		mapPokemon.sort(function(a, b) {
+			return a.pokemonId - b.pokemonId;
+		});
 
-				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
-				"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
-			}
+		// http://stackoverflow.com/questions/5024735/google-maps-static-map-custom-icons-limit/20409862#20409862
+		var location = centerLocation.latitude + "," + centerLocation.longitude;
+		var zoom = 18 - spotterOptional.steps;
+		var size = "512x512";
+		var markers = "&markers=size:tiny%7Ccolor:0x0080ff%7Clabel:%7C" + location;
+		var style = "&style=feature:all|visibility:off";	// 取透明底圖用
+		var message = "";
+		var typeCount = 0;
+		var prePokemonId = 0;
+		mapPokemon.forEach(function(p) {
+			var lastTime = getLastTime(p.expirationTime);
+			// if (lastTime > 0) {
+			// 	if (typeCount == 0) {
+			// 		typeCount = 1;
+			// 		prePokemonId = p.pokemonId;
+			// 		markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+			// 	} else if (typeCount == 5) {
+
+			// 	}
+			// 		markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+
+			// 	}
+			// 	message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
+			// 			"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+
+				
+			// 	message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
+			// 	"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+			// }
 		});
 
 		var mapUrl = "http://maps.google.com/maps/api/staticmap?center=" + location +
-		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&sensor=false" + markers;
+		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true" + markers;
 
 		telegramBot.sendMessage(chatId, mapUrl);
 
