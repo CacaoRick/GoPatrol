@@ -72,11 +72,20 @@ module.exports = {
 	searchDelay: 1,
 
 	/**
+	 * 寶可夢白名單
+	 * []中不填入則不使用白名單過濾
+	 * 程式會先用白名單過濾後再使用黑名單排除
+	 * 設定後只有名單中的會通知，編號可參考 pokemon_name.js
+	 * whitelist: [131, 143, 149]
+	 */
+	whitelist: [],
+
+	/**
 	 * 寶可夢黑名單
 	 * 設定後不會通知，編號可參考 pokemon_name.js
 	 * 範例：blacklist: [10, 13, 16, 19]
 	 */
-	blacklist: [],
+	blacklist: []
 
 	/**
 	 * Debug 輸出

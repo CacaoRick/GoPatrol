@@ -13,6 +13,7 @@ const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
 const initDate = new Date();
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
+var whitelist = config.whitelist;	// 寶可夢白名單
 var blacklist = config.blacklist;	// 寶可夢黑名單
 var spotterOptional = {
 	steps: config.searchSteps,			// 搜尋範圍
@@ -102,20 +103,27 @@ event.on("patrol", function(thisSpotterId) {
 		nearbyPokemons.forEach(function(np) {
 			var isNeedSave = true;
 			
-			if (blacklist.indexOf(np.pokemonId) >= 0) {
-				// 找到黑名單，不儲存
-				isNeedSave = false;
+			if (whitelist.length == 0 || whitelist.indexOf(np.pokemonId) >= 0) {
+				// 白名單未設定，或是在白名單中有找到，檢查黑名單
+				if (blacklist.indexOf(np.pokemonId) < 0) {
+					// 不在黑名單，檢查是否重複
+					pokemons.forEach(function(p) {
+						if (np.spawnPointId == p.spawnPointId && np.pokemonId == p.pokemonId) {
+							// 已存在，不儲存
+							isNeedSave = false;
+						}
+					});
+				} else {
+					isNeedSave = false;
+				}
 			} else {
-				// 不在黑名單中，尋找是否已儲存
-				pokemons.forEach(function(p) {
-					if (np.spawnPointId == p.spawnPointId && np.pokemonId == p.pokemonId) {
-						// 已存在，不儲存
-						isNeedSave = false;
-					}
-				});
+				// 被白名單過濾
+				isNeedSave = false;
 			}
-
+			
+			// 檢查完畢，確認是否需儲存
 			if (isNeedSave) {
+				// 要儲存，先幫他加上通知狀態，設為false
 				np.isInformed = false;
 				pokemons.push(np);
 				console.log("新增 #" + np.pokemonId, pokemonNames[np.pokemonId], np.spawnPointId, getHHMMSS(np.expirationTime));
