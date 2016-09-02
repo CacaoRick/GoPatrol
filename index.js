@@ -11,7 +11,8 @@ const Pokespotter = require("pokespotter");
 const event = new EventEmitter();
 const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
 const initDate = new Date();
-var iconhost = "http://gopatrol.ass.tw/pixel_icons/";
+const fifteenMinutes = 900000;
+const iconhost = "http://gopatrol.ass.tw/pixel_icons/";
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
 var whitelist = config.whitelist;	// 寶可夢白名單
@@ -161,7 +162,7 @@ event.on("checkLastTime", function(thisSpotterId) {
 		console.log("[" + getHHMMSS(Date.now()) + "] 開始檢查結束時間並進行通知...\n");
 		for (var i = pokemons.length - 1; i >= 0; i--) {
 			var lastTime = getLastTime(pokemons[i].expirationTime);
-			if (lastTime > 0) {
+			if (lastTime > 0 && lastTime <= fifteenMinutes) {
 				// 尚未結束，確認是否未通知
 				if (!pokemons[i].isInformed) {
 					// 尚未通知，執行通知
@@ -214,6 +215,10 @@ event.on("getmap", function(chatId) {
 		var prePokemonId = 0;
 		mapPokemon.forEach(function(p) {
 			var lastTime = getLastTime(p.expirationTime);
+			if (lastTime > 0 && lastTime <= fifteenMinutes) {
+				
+			}
+
 			// if (lastTime > 0) {
 			// 	if (typeCount == 0) {
 			// 		typeCount = 1;
