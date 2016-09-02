@@ -209,14 +209,14 @@ event.on("getmap", function(chatId) {
 		
 
 		// Build URL
-		var zoom = 18 - spotterOptional.steps;
+		var zoom = 18 - spotterOptional.steps + 3;
 		var size = "512x512";
 		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
 		// 不透明地圖 URL
-		var mapUrl_0 = "http://maps.google.com/maps/api/staticmap?center=" + location +
+		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + location +
 		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
 		// 透明地圖 URL
-		var mapUrl_N = mapUrl_0 + TransparentStyle;
+		var mapUrlTransparent = mapUrlNormal + TransparentStyle;
 
 		// Build Markers (message 順便)
 		var message = "";
@@ -229,14 +229,20 @@ event.on("getmap", function(chatId) {
 			var lastTime = getLastTime(p.expirationTime);
 			if (lastTime > 0 && lastTime <= fifteenMinutes) {
 				if (typeCount % 5 == 0) {
-					// 滿五種，換 markersIdx
-					markersIdx++;
-					markers[markersIdx] = "";
+					if (prePokemonId == 0) {
+						// 第一次執行，不換 markersIdx
+					} else {
+						// 滿五種，換 markersIdx
+						markersIdx++;
+						markers[markersIdx] = "";
+					}
 				}
 				if (p.pokemonId > prePokemonId) {
 					// 新 Type
 					typeCount++;
+					prePokemonId = p.pokemonId;
 				}
+
 				// 續編 markers
 				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
 
@@ -247,14 +253,26 @@ event.on("getmap", function(chatId) {
 		});
 
 		var mapurls = [];
+		var oldurl = mapUrlNormal;
 		markers.forEach(function(m, idx) {
 			if (idx == 0) {
-				mapurls.push(mapUrl_0 + m);
+				mapurls.push(mapUrlNormal + m);
 			} else {
-				mapurls.push(mapUrl_N + m);
+				mapurls.push(mapUrlTransparent + m);
 			}
+			//oldurl = oldurl + m;
 			telegramBot.sendMessage(chatId, mapurls[idx]);
 		});
+		//telegramBot.sendMessage(chatId, oldurl);
+
+		// 下載地圖檔 buffer
+		
+
+		// 組合地圖 buffer
+
+
+		// 送給使用者
+
 		
 		// 將地圖圖檔下載傳給使用者
 		// request({url:mapUrl, encoding:null}, function (error, response, body) {
