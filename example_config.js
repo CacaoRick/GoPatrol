@@ -85,7 +85,7 @@ module.exports = {
 	 * 設定後不會通知，編號可參考 pokemon_name.js
 	 * 範例：blacklist: [10, 13, 16, 19]
 	 */
-	blacklist: []
+	blacklist: [],
 
 	/**
 	 * Debug 輸出
