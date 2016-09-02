@@ -206,60 +206,72 @@ event.on("getmap", function(chatId) {
 
 		// http://stackoverflow.com/questions/5024735/google-maps-static-map-custom-icons-limit/20409862#20409862
 		var location = centerLocation.latitude + "," + centerLocation.longitude;
+		
+
+		// Build URL
 		var zoom = 18 - spotterOptional.steps;
 		var size = "512x512";
-		var markers = "&markers=size:tiny%7Ccolor:0x0080ff%7Clabel:%7C" + location;
-		var style = "&style=feature:all|visibility:off";	// 取透明底圖用
+		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
+		// 不透明地圖 URL
+		var mapUrl_0 = "http://maps.google.com/maps/api/staticmap?center=" + location +
+		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
+		// 透明地圖 URL
+		var mapUrl_N = mapUrl_0 + TransparentStyle;
+
+		// Build Markers (message 順便)
 		var message = "";
 		var typeCount = 0;
 		var prePokemonId = 0;
+		var markers = [];
+		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + location;	// 畫出中心
+		var markersIdx = 0;
 		mapPokemon.forEach(function(p) {
 			var lastTime = getLastTime(p.expirationTime);
 			if (lastTime > 0 && lastTime <= fifteenMinutes) {
-				
+				if (typeCount % 5 == 0) {
+					// 滿五種，換 markersIdx
+					markersIdx++;
+					markers[markersIdx] = "";
+				}
+				if (p.pokemonId > prePokemonId) {
+					// 新 Type
+					typeCount++;
+				}
+				// 續編 markers
+				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+
+				// 續編 message
+				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
+					"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
 			}
-
-			// if (lastTime > 0) {
-			// 	if (typeCount == 0) {
-			// 		typeCount = 1;
-			// 		prePokemonId = p.pokemonId;
-			// 		markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
-			// 	} else if (typeCount == 5) {
-
-			// 	}
-			// 		markers = markers + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
-
-			// 	}
-			// 	message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
-			// 			"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
-
-				
-			// 	message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
-			// 	"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
-			// }
 		});
 
-		var mapUrl = "http://maps.google.com/maps/api/staticmap?center=" + location +
-		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true" + markers;
-
-		telegramBot.sendMessage(chatId, mapUrl);
-
-		// 將地圖圖檔下載傳給使用者
-		request({url:mapUrl, encoding:null}, function (error, response, body) {
-			if (!error && response.statusCode == 200) {
-				var imageBuffer = Buffer.from(body);
-				// 將地圖傳給使用者
-				telegramBot.sendPhoto(chatId, imageBuffer);
-
-				// 傳送寶可夢編號和資訊
-				telegramBot.sendMessage(chatId, message);
+		var mapurls = [];
+		markers.forEach(function(m, idx) {
+			if (idx == 0) {
+				mapurls.push(mapUrl_0 + m);
 			} else {
-				// 請求失敗
-				telegramBot.sendMessage(chatId, "地圖圖檔請求失敗(狀態：" + response.statusCode + ")");
-				console.log(getHHMMSS(Date.now()) + " /getmap (" + response.statusCode + ")地圖圖檔請求失敗...");
-				console.log(error);
+				mapurls.push(mapUrl_N + m);
 			}
+			telegramBot.sendMessage(chatId, mapurls[idx]);
 		});
+		
+		// 將地圖圖檔下載傳給使用者
+		// request({url:mapUrl, encoding:null}, function (error, response, body) {
+		// 	if (!error && response.statusCode == 200) {
+		// 		var imageBuffer = Buffer.from(body);
+		// 		// 將地圖傳給使用者
+		// 		telegramBot.sendPhoto(chatId, imageBuffer);
+
+		// 		// 傳送寶可夢編號和資訊
+		// 		telegramBot.sendMessage(chatId, message);
+		// 	} else {
+		// 		// 請求失敗
+		// 		telegramBot.sendMessage(chatId, "地圖圖檔請求失敗(狀態：" + response.statusCode + ")");
+		// 		console.log(getHHMMSS(Date.now()) + " /getmap (" + response.statusCode + ")地圖圖檔請求失敗...");
+		// 		console.log(error);
+		// 	}
+		// });
 	} else {
 		telegramBot.sendMessage(chatId, "目前無資料");
 	}
