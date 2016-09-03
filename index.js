@@ -377,8 +377,6 @@ if (config.telegramChannelID != null) {
 		var command = "";	// 用來儲存指令
 
 		// 只接受伺服器啟動後的指令
-		console.log(msg.date);
-		console.log((initDate / 1000));
 		if (checkMsgTime) {
 			// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
 			if (typeof msg.text !== "undefined") {
