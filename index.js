@@ -17,7 +17,8 @@ const iconHost = "http://gopatrol.ass.tw/pixel_icons/";
 const fifteenMinutes = 900000;
 // 通知顯示距離
 var showDistance = typeof config.showDistance === "undefined" ? true : config.showDistance;
-var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
+// 管理員名單，檢查是否有多餘的@，有的話去掉
+var telegramAdminUsernames = checkAdmin(config.telegramAdminUsernames);
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
 var whitelist = config.whitelist || [];			// 寶可夢白名單
 var blacklist = config.blacklist || [];			// 寶可夢黑名單
@@ -336,15 +337,19 @@ event.on("getmap", function(chatId) {
 });
 
 if (config.telegramChannelID != null) {
-	console.log("廣播模式啟動\n");
-	telegramBot.sendMessage(config.telegramChannelID, "伺服器啟動，開始巡邏與通知");
+	if (config.telegramChannelID.indexOf("@") == 0) {
+		console.log("廣播模式啟動\n");
+		telegramBot.sendMessage(config.telegramChannelID, "伺服器啟動，開始巡邏與通知");
 
-	// 將頻道ID存入 activeChatIDs
-	activeChatIDs = [config.telegramChannelID];
-	// 觸發第一次巡邏
-	event.emit("patrol", runningSpotterId);
-	// 更改執行狀態
-	isPatrolling = true;
+		// 將頻道ID存入 activeChatIDs
+		activeChatIDs = [config.telegramChannelID];
+		// 觸發第一次巡邏
+		event.emit("patrol", runningSpotterId);
+		// 更改執行狀態
+		isPatrolling = true;
+	} else {
+		console.log("廣播模式，頻道ID設定錯誤，請檢查 config.js");
+	}
 } else {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
 
@@ -569,4 +574,12 @@ function getMMSS(time) {
 	var minutes = date.getMinutes();
 	var seconds = "0" + date.getSeconds();
 	return minutes + ':' + seconds.substr(-2);
+}
+
+// 檢查管理員名單是否有多的@，有的話去掉
+function checkAdmin(admins) {
+	for (var i = 0; i < admins.length; i++) {
+		admins[i] = admins[i].replace("@", "");
+	}
+	return admins;
 }
