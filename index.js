@@ -390,6 +390,7 @@ if (config.telegramChannelID != null) {
 					"/run 開始巡邏和通知\n" +
 					"/stop 停止巡邏和通知\n" +
 					"/restart 強制重啟巡邏\n" +
+					"/setsteps <steps> 更改巡邏範圍\n" +
 					"/status 取得伺服器狀態\n" +
 					"傳送位置訊息可更改巡邏中心位置\n\n" +
 					"首頁：https://github.com/CacaoRick/GoPatrol"
