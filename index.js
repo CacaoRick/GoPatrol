@@ -208,11 +208,8 @@ event.on("getmap", function(chatId) {
 		var mapcenter = centerLocation.latitude + "," + centerLocation.longitude;
 
 		// Build URL
-		var zoom = 20 - spotterOptional.steps;
-		if (zoom > 17) {
-			zoom = 17;
-		}
-		var size = "512x512";
+		var zoom = 17 - Math.ceil(spotterOptional.steps / 3);
+		var size = "640x640";
 		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
 		// 不透明地圖 URL
 		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + mapcenter +
@@ -314,7 +311,6 @@ event.on("getmap", function(chatId) {
 		// 全部處理完畢，開始合成地圖並傳送
 		function sendMap() {
 			jimpImages.forEach(function(img, idx) {
-				img.write(idx + ".png");
 				mapImage.composite(img, 0, 0);
 			});
 
