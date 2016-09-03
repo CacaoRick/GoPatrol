@@ -18,10 +18,10 @@
 
 ### 更新內容
 
-v1.1.0
+v1.1.0 Coming Sooooon...
 
-- 新增白名單功能
-- 新增 `/setsteps <steps>` 指令
+- 新增白名單功能，會先以白名單過濾，再用黑名單篩選
+- 新增 `/setsteps <steps>` 指令，可用 Telegram 設定 `searchSteps`
 - 改善 `/getmap`，現在取回的地圖會有寶可夢的小ICON
 - 巡邏結束後顯示費時
 
