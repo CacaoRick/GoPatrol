@@ -1,6 +1,6 @@
 {
   "name": "gopatrol",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Telegram bot for notice nearby pokemon.",
   "main": "index.js",
   "dependencies": {
