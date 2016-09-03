@@ -1,3 +1,4 @@
+ 'use strict'
 let pokemonNames = [];
 pokemonNames[1] = "妙蛙種子",
 pokemonNames[2] = "妙蛙草",
