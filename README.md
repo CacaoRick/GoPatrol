@@ -4,7 +4,7 @@
 
 作者 Telegram [@CacaoRick](http://telegram.me/CacaoRick)，問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)。
 
-感謝`柯姊`提供 Icon host 與 `Joseph Tsai` 提供意見及部分程式碼。
+感謝`柯姊`提供 Icon host、`Joseph Tsai` 提供部分程式碼以及[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)的大家提供各種意見。
 
 ## 下載
 
@@ -17,6 +17,13 @@
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2-mac.zip)
 
 ### 更新內容
+
+v1.1.0
+
+- 新增白名單功能
+- 新增 `/setsteps <steps>` 指令
+- 改善 `/getmap`，現在取回的地圖會有寶可夢的小ICON
+- 巡邏結束後顯示費時
 
 v1.0.2
 
