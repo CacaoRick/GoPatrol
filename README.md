@@ -6,7 +6,7 @@
 
 ## 下載
 
-目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)
+目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)，請詳閱[使用說明](https://github.com/CacaoRick/GoPatrol#使用說明)。
 
 [Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-win_x64.zip)
 
@@ -68,6 +68,7 @@ v1.0.1
 - `/stop` 停止巡邏和通知
 - `/restart` 強制重啟巡邏
 - `/status` 取得伺服器狀態
+- `/setsteps <數字>` 更改巡邏範圍，例如 `/setsteps 2`
 - 傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）
 
 ### 建立 Telegram 機器人
