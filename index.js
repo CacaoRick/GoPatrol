@@ -1,6 +1,7 @@
 'use strict';
+const version = "v1.1.0";
 console.log("Go Patrol version:");
-console.log("v1.0.2");
+console.log(version);
 const config = require("./config.js");
 const TelegramBot = require("./telegramBot.js")
 const pokemonNames = require("./pokemon_names.js");
@@ -381,6 +382,7 @@ if (config.telegramChannelID != null) {
 			if (command == "/help") {
 				telegramBot.sendMessage(
 					chatId,
+					"GoPatrol " + version + "\n" +
 					"說明：\n" +
 					"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
 					"一般指令：\n" +
