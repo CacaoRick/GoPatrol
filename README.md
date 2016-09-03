@@ -4,28 +4,26 @@
 
 作者 Telegram [@CacaoRick](http://telegram.me/CacaoRick)，問題與討論請至 Telegram 群組[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)。
 
-感謝`柯姊`提供 Icon host、`Joseph Tsai` 提供部分程式碼以及[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)的大家提供各種意見。
-
 ## 下載
 
-目前最新版本為 [v1.0.2](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.0.2)
+目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)
 
 請注意 `config.js` 中的時間單位皆為**秒**。
 
-[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2_win_x64.zip)
+[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-win_x64.zip)
 
-[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.0.2/GoPatrol_v1.0.2-mac.zip)
+[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-mac.zip)
 
 ### 更新內容
 
-v1.1.0 Coming Sooooon...
+v1.1.0
 
 - 新增白名單功能，會先以白名單過濾，再用黑名單篩選
 - 新增 `/setsteps <steps>` 指令，可用 Telegram 設定 `searchSteps`
 - `/getmap` 改版，現在取回的地圖會有寶可夢的小ICON
 - 巡邏結束後顯示費時
 - 防止機器人接收伺服器啟動前的指令
-- 過濾剩餘時間超過15分鐘的奇怪寶可夢
+- 已知API會提供剩餘時間異常的寶可夢，因此目前改為剩餘時間超過15分鐘的不通知
 - 傳送位置訊息後會將現有的寶可夢資料清空
 
 v1.0.2
@@ -130,3 +128,8 @@ Telegram iOS APP
 ![iOS Demo](screenshot/iOSDemo.png)
 
 ![iOS Demo](screenshot/getmapDemo.png)
+
+## 感謝
+感謝`柯姊`提供 Icon host
+感謝`Joseph Tsai` 提供部分程式碼
+感謝[自己的廣播自己架](https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw)的大家提供各種意見
