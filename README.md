@@ -23,8 +23,10 @@ v1.1.0 Coming Sooooon...
 - 新增白名單功能，會先以白名單過濾，再用黑名單篩選
 - 新增 `/setsteps <steps>` 指令，可用 Telegram 設定 `searchSteps`
 - `/getmap` 改版，現在取回的地圖會有寶可夢的小ICON
-- 過濾剩餘時間超過15分鐘的奇怪寶可夢
 - 巡邏結束後顯示費時
+- 防止機器人接收伺服器啟動前的指令
+- 過濾剩餘時間超過15分鐘的奇怪寶可夢
+- 傳送位置訊息後會將現有的寶可夢資料清空
 
 v1.0.2
 
@@ -126,3 +128,5 @@ Telegram Desktop
 Telegram iOS APP
 
 ![iOS Demo](screenshot/iOSDemo.png)
+
+![iOS Demo](screenshot/getmapDemo.png)
