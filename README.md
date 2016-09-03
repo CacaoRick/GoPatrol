@@ -8,11 +8,11 @@
 
 目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)
 
-請注意 `config.js` 中的時間單位皆為**秒**。
-
 [Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-win_x64.zip)
 
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-mac.zip)
+
+其他系統可下載 Mac 版並自行下載 v6.4.0 以上之 [Node.js](https://nodejs.org/en/download/current/) 使用。
 
 ### 更新內容
 
