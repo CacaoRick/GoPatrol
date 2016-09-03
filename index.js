@@ -377,7 +377,8 @@ if (config.telegramChannelID != null) {
 		var command = "";	// 用來儲存指令
 
 		// 只接受伺服器啟動後的指令
-		console.log(msg.date - initDate / 1000);
+		console.log(msg.date);
+		console.log((initDate / 1000));
 		if (checkMsgTime) {
 			// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
 			if (typeof msg.text !== "undefined") {
@@ -545,7 +546,7 @@ function getLastTime(endTime) {
 
 // 檢查訊息時間是否為伺服器啟動後
 function checkMsgTime(msgTime) {
-	return msgTime - initDate / 1000 >= 0
+	return ( msgTime - (initDate / 1000) ) >= 0
 }
 
 // 取得 時:分:秒
