@@ -459,7 +459,7 @@ if (config.telegramChannelID != null) {
 					"伺服器狀態\n" +
 					"巡邏中：" + isPatrolling + "\n" +
 					"帳號數量：" + config.account.length + "\n" +
-					"巡邏範圍：" + config.searchSteps * 100 + "m\n" +
+					"巡邏範圍：" + spotterOptional.steps * 100 + "m\n" +
 					"巡邏重啟次數：" + runningSpotterId + "\n" +
 					"伺服器啟動日期：" + initDate.getFullYear() + "-" + (initDate.getMonth() + 1) + "-" + initDate.getDate() + " " + getHHMMSS(initDate)
 				);
