@@ -7,6 +7,7 @@ const TelegramBot = require("./telegramBot.js")
 const EventEmitter = require("events");
 const request = require('request');
 const Pokespotter = require("pokespotter");
+const Jimp = require("jimp");
 
 const event = new EventEmitter();
 const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
@@ -26,7 +27,7 @@ const debug = config.debug;
 if (debug) {
 	console.log("debug on.")
 }
-
+var mapBuffer;
 var pokespotters = [];			// 儲存 Spotter 用
 pokespotters[0] = Pokespotter(config.account);		// 建立第一個 Spotter
 pokespotters[0].runCount = 0;	// 記錄 Spotter 執行次數，用來確認是不是卡住了
@@ -204,16 +205,17 @@ event.on("getmap", function(chatId) {
 			return a.pokemonId - b.pokemonId;
 		});
 
-		// http://stackoverflow.com/questions/5024735/google-maps-static-map-custom-icons-limit/20409862#20409862
-		var location = centerLocation.latitude + "," + centerLocation.longitude;
-		
+		var mapcenter = centerLocation.latitude + "," + centerLocation.longitude;
 
 		// Build URL
-		var zoom = 18 - spotterOptional.steps + 3;
+		var zoom = 20 - spotterOptional.steps;
+		if (zoom > 17) {
+			zoom = 17;
+		}
 		var size = "512x512";
 		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
 		// 不透明地圖 URL
-		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + location +
+		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + mapcenter +
 		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
 		// 透明地圖 URL
 		var mapUrlTransparent = mapUrlNormal + TransparentStyle;
@@ -223,7 +225,7 @@ event.on("getmap", function(chatId) {
 		var typeCount = 0;
 		var prePokemonId = 0;
 		var markers = [];
-		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + location;	// 畫出中心
+		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + mapcenter;	// 畫出中心
 		var markersIdx = 0;
 		mapPokemon.forEach(function(p) {
 			var lastTime = getLastTime(p.expirationTime);
@@ -252,44 +254,75 @@ event.on("getmap", function(chatId) {
 			}
 		});
 
+		// 準備靜態地圖 url
 		var mapurls = [];
-		var oldurl = mapUrlNormal;
+		var oldMapUrl = mapUrlNormal;
 		markers.forEach(function(m, idx) {
 			if (idx == 0) {
 				mapurls.push(mapUrlNormal + m);
 			} else {
 				mapurls.push(mapUrlTransparent + m);
 			}
-			//oldurl = oldurl + m;
-			telegramBot.sendMessage(chatId, mapurls[idx]);
+			oldMapUrl = oldMapUrl + m;
 		});
-		//telegramBot.sendMessage(chatId, oldurl);
-
-		// 下載地圖檔 buffer
+		if (debug) {
+			telegramBot.sendMessage(chatId, oldMapUrl);	
+		}
 		
+		// 處理每張地圖
+		var mapImage = null;
+		var jimpImages = [];
+		var processCount = 0;
+		mapurls.forEach(function(url, idx) {
+			if (idx == 0) {
+				Jimp.read(url, saveBase);	// 底圖另外存在 mapImage
+			} else {
+				Jimp.read(url, processImage);
+			}
+		});
 
-		// 組合地圖 buffer
-
-
-		// 送給使用者
-
+		// 儲存有底圖的地圖影像到 mapImage
+		function saveBase(err, image) {
+			if (err) {
+				console.log("影像處理失敗");
+				throw err;
+			} else {
+				mapImage = image;
+				processCount++;
+				if (processCount == mapurls.length) {
+					// 全部處理完畢，開始合成地圖並傳送
+					sendMap();
+				}
+			}
+		}
 		
-		// 將地圖圖檔下載傳給使用者
-		// request({url:mapUrl, encoding:null}, function (error, response, body) {
-		// 	if (!error && response.statusCode == 200) {
-		// 		var imageBuffer = Buffer.from(body);
-		// 		// 將地圖傳給使用者
-		// 		telegramBot.sendPhoto(chatId, imageBuffer);
+		// 儲存地圖影像到 jimpImages[]
+		function processImage(err, image) {
+			if (err) {
+				console.log("影像處理失敗");
+				throw err;
+			} else {
+				jimpImages.push(image);
+				processCount++;
+				if (processCount == mapurls.length) {
+					// 全部處理完畢，開始合成地圖並傳送
+					sendMap();
+				}
+			}
+		}
 
-		// 		// 傳送寶可夢編號和資訊
-		// 		telegramBot.sendMessage(chatId, message);
-		// 	} else {
-		// 		// 請求失敗
-		// 		telegramBot.sendMessage(chatId, "地圖圖檔請求失敗(狀態：" + response.statusCode + ")");
-		// 		console.log(getHHMMSS(Date.now()) + " /getmap (" + response.statusCode + ")地圖圖檔請求失敗...");
-		// 		console.log(error);
-		// 	}
-		// });
+		// 全部處理完畢，開始合成地圖並傳送
+		function sendMap() {
+			jimpImages.forEach(function(img, idx) {
+				img.write(idx + ".png");
+				mapImage.composite(img, 0, 0);
+			});
+
+			telegramBot.sendMessage(chatId, message);
+			mapImage.getBuffer(Jimp.MIME_PNG, function(err, buffer) {
+				telegramBot.sendPhoto(chatId, buffer);
+			});
+		}
 	} else {
 		telegramBot.sendMessage(chatId, "目前無資料");
 	}
