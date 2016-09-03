@@ -353,7 +353,7 @@ if (config.telegramChannelID != null) {
 		}
 
 		// 只接受伺服器啟動後的指令
-		if (msg.date - initDate >= 0) {
+		if (checkMsgTime) {
 			var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
 			var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
 			var value = Number(match[1]);
@@ -377,7 +377,8 @@ if (config.telegramChannelID != null) {
 		var command = "";	// 用來儲存指令
 
 		// 只接受伺服器啟動後的指令
-		if (msg.date - initDate >= 0) {
+		console.log(msg.date - initDate / 1000);
+		if (checkMsgTime) {
 			// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
 			if (typeof msg.text !== "undefined") {
 				command = msg.text.split("@")[0];	// 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
@@ -484,7 +485,7 @@ if (config.telegramChannelID != null) {
 		// 判斷是否為管理員
 		if (telegramAdminUsernames.indexOf(msg.from.username) >= 0) {
 			// 只接受伺服器啟動後的指令
-			if (msg.date - initDate >= 0) {
+			if (checkMsgTime) {
 				// 清空 pokemons
 				pokemons = [];			
 				// 更改座標
@@ -540,6 +541,11 @@ function sendPokemon(chatId, pokemon, lastTime) {
 // 取得剩餘時間 timestamps，若為負數表示已結束
 function getLastTime(endTime) {
 	return endTime - Date.now();
+}
+
+// 檢查訊息時間是否為伺服器啟動後
+function checkMsgTime(msgTime) {
+	return msgTime - initDate / 1000 >= 0
 }
 
 // 取得 時:分:秒
