@@ -19,12 +19,12 @@ const fifteenMinutes = 900000;
 var showDistance = typeof config.showDistance === "undefined" ? true : config.showDistance;
 // 管理員名單，檢查是否有多餘的@，有的話去掉
 var telegramAdminUsernames = checkAdmin(config.telegramAdminUsernames);
-var centerLocation = config.initCenterLocation;	// 搜尋中心位置
-var whitelist = config.whitelist || [];			// 寶可夢白名單
-var blacklist = config.blacklist || [];			// 寶可夢黑名單
+var centerLocation = config.initCenterLocation; // 搜尋中心位置
+var whitelist = config.whitelist || []; // 寶可夢白名單
+var blacklist = config.blacklist || []; // 寶可夢黑名單
 var spotterOptional = {
-	steps: config.searchSteps,					// 搜尋範圍
-	requestDelay: config.searchDelay * 1000,	// 搜尋延遲
+	steps: config.searchSteps, // 搜尋範圍
+	requestDelay: config.searchDelay * 1000, // 搜尋延遲
 	currentTime: initDate
 }
 const debug = false;
@@ -32,14 +32,14 @@ if (debug) {
 	console.log("debug on.")
 }
 var mapBuffer;
-var pokespotters = [];			// 儲存 Spotter 用
-pokespotters[0] = Pokespotter(config.account);		// 建立第一個 Spotter
-pokespotters[0].runCount = 0;	// 記錄 Spotter 執行次數，用來確認是不是卡住了
-var runningSpotterId = 0;		// 記錄目前 Spotter 的 Id，用來確認 Spotter 存活狀態
-var isWattingRestart = false;	// 正在重啟中，用來確保不要重複重啟
-var isPatrolling = false;		// 巡邏執行狀態
-var pokemons = [];				// 儲存的寶可夢
-var activeChatIDs = [];			// 啟動中的 Telegram ChatID
+var pokespotters = []; // 儲存 Spotter 用
+pokespotters[0] = Pokespotter(config.account); // 建立第一個 Spotter
+pokespotters[0].runCount = 0; // 記錄 Spotter 執行次數，用來確認是不是卡住了
+var runningSpotterId = 0; // 記錄目前 Spotter 的 Id，用來確認 Spotter 存活狀態
+var isWattingRestart = false; // 正在重啟中，用來確保不要重複重啟
+var isPatrolling = false; // 巡邏執行狀態
+var pokemons = []; // 儲存的寶可夢
+var activeChatIDs = []; // 啟動中的 Telegram ChatID
 
 // 巡邏
 event.on("patrol", function(thisSpotterId) {
@@ -53,7 +53,7 @@ event.on("patrol", function(thisSpotterId) {
 		// 將 runCount 儲存為區域變數
 		var runCount = pokespotters[thisSpotterId].runCount;
 		// 計時開始，根據設定檔中的 autoRestartTime，時間到以後檢查執行狀態，若還在執行中就當作他卡住了
-		setTimeout(function () {
+		setTimeout(function() {
 			// 有在巡邏中才檢查
 			if (isPatrolling) {
 				if (debug) {
@@ -78,7 +78,7 @@ event.on("patrol", function(thisSpotterId) {
 						if (!isWattingRestart) {
 							console.log("[" + getHHMMSS(Date.now()) + "] 過了" + config.autoRestartTime + "秒還沒找完，好像卡住了？");
 							restart();
-						}	
+						}
 					} else if (debug) {
 						console.log("spotter not blocking.");
 						console.log("====\n");
@@ -93,14 +93,14 @@ event.on("patrol", function(thisSpotterId) {
 
 	// 開始巡邏
 	spotterOptional.currentTime = Date.now();
-	
+
 	if (debug) {
 		console.log("thisSpotterId:" + thisSpotterId);
 		console.log("runningSpotterId:" + runningSpotterId);
 		console.log("thisSpotter runcount:" + pokespotters[thisSpotterId].runCount + "\n");
 	}
 
-	console.log("["+ getHHMMSS(spotterOptional.currentTime) + "] 開始巡邏...");
+	console.log("[" + getHHMMSS(spotterOptional.currentTime) + "] 開始巡邏...");
 	pokespotters[thisSpotterId].get(centerLocation, spotterOptional).then(function(nearbyPokemons) {
 		// 有跑進來表示沒卡住，把執行次數+1
 		pokespotters[thisSpotterId].runCount++;
@@ -109,7 +109,7 @@ event.on("patrol", function(thisSpotterId) {
 		// 比對每隻發現的將新發現的寶可夢儲存至 pokemons
 		nearbyPokemons.forEach(function(np) {
 			var isNeedSave = true;
-			
+
 			if (whitelist.length == 0 || whitelist.indexOf(np.pokemonId) >= 0) {
 				// 白名單未設定，或是在白名單中有找到，檢查黑名單
 				if (blacklist.indexOf(np.pokemonId) < 0) {
@@ -127,7 +127,7 @@ event.on("patrol", function(thisSpotterId) {
 				// 被白名單過濾
 				isNeedSave = false;
 			}
-			
+
 			// 檢查完畢，確認是否需儲存
 			if (isNeedSave) {
 				// 要儲存，先幫他加上通知狀態，設為false
@@ -214,10 +214,10 @@ event.on("getmap", function(chatId) {
 		// Build URL
 		var zoom = 17 - Math.floor(spotterOptional.steps / 3);
 		var size = "640x640";
-		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
+		var TransparentStyle = "&style=feature:all|visibility:off"; // 取透明底圖用
 		// 不透明地圖 URL
 		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + mapcenter +
-		"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
+			"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
 		// 透明地圖 URL
 		var mapUrlTransparent = mapUrlNormal + TransparentStyle;
 
@@ -226,7 +226,7 @@ event.on("getmap", function(chatId) {
 		var typeCount = 0;
 		var prePokemonId = 0;
 		var markers = [];
-		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + mapcenter;	// 畫出中心
+		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + mapcenter; // 畫出中心
 		var markersIdx = 0;
 		mapPokemon.forEach(function(p) {
 			var lastTime = getLastTime(p.expirationTime);
@@ -254,7 +254,7 @@ event.on("getmap", function(chatId) {
 				if (showDistance) {
 					distance = p.distance + "m｜";
 				}
-				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
+				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] +
 					"\n" + distance + "-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
 			}
 		});
@@ -274,16 +274,16 @@ event.on("getmap", function(chatId) {
 				oldMapUrl = oldMapUrl + m;
 			});
 			if (debug) {
-				telegramBot.sendMessage(chatId, oldMapUrl);	
+				telegramBot.sendMessage(chatId, oldMapUrl);
 			}
-			
+
 			// 處理每張地圖
 			var mapImage = null;
 			var jimpImages = [];
 			var processCount = 0;
 			mapurls.forEach(function(url, idx) {
 				if (idx == 0) {
-					Jimp.read(url, saveBase);	// 底圖另外存在 mapImage
+					Jimp.read(url, saveBase); // 底圖另外存在 mapImage
 				} else {
 					Jimp.read(url, processImage);
 				}
@@ -303,7 +303,7 @@ event.on("getmap", function(chatId) {
 					}
 				}
 			}
-			
+
 			// 儲存地圖影像到 jimpImages[]
 			function processImage(err, image) {
 				if (err) {
@@ -353,7 +353,7 @@ if (config.telegramChannelID != null) {
 } else {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
 
-	telegramBot.onText(/\/setsteps (.+)/, function (msg, match) {
+	telegramBot.onText(/\/setsteps (.+)/, function(msg, match) {
 		if (debug) {
 			console.log("on message event.");
 			console.log("match:")
@@ -362,8 +362,8 @@ if (config.telegramChannelID != null) {
 
 		// 只接受伺服器啟動後的指令
 		if (checkMsgTime) {
-			var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
-			var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
+			var chatId = msg.chat.id; // chat.id 可能會是群組ID或個人ID
+			var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0; // 傳訊者是否為管理員
 			var value = Number(match[1]);
 			if (!isNaN(value) && isAdmin) {
 				spotterOptional.steps = value;
@@ -378,18 +378,18 @@ if (config.telegramChannelID != null) {
 			console.log("on message event.");
 			console.log(msg);
 		}
-		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
-		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
-		
-		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0;	// chatId是否在 activeChatIDs 中，用來判斷是不是路人亂+BOT
-		var command = "";	// 用來儲存指令
+		var chatId = msg.chat.id; // chat.id 可能會是群組ID或個人ID
+		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0; // 傳訊者是否為管理員
+
+		var isInActiveChatID = activeChatIDs.indexOf(chatId) >= 0; // chatId是否在 activeChatIDs 中，用來判斷是不是路人亂+BOT
+		var command = ""; // 用來儲存指令
 
 		// 只接受伺服器啟動後的指令
 		if (checkMsgTime) {
 			// 先確定有文字，因為在群組模式有人進出也會有 message 但是沒有文字，text 會變成 undefined
 			if (typeof msg.text !== "undefined") {
-				command = msg.text.split("@")[0];	// 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
-				
+				command = msg.text.split("@")[0]; // 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
+
 				// 發送說明
 				if (command == "/help") {
 					telegramBot.sendMessage(
@@ -399,7 +399,7 @@ if (config.telegramChannelID != null) {
 						"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
 						"一般指令：\n" +
 						"/getmap 取得附近寶可夢地圖\n\n" +
-						"管理員專用：\n" + 
+						"管理員專用：\n" +
 						"/help 查看說明\n" +
 						"/run 開始巡邏和通知\n" +
 						"/stop 停止巡邏和通知\n" +
@@ -494,7 +494,7 @@ if (config.telegramChannelID != null) {
 			// 只接受伺服器啟動後的指令
 			if (checkMsgTime) {
 				// 清空 pokemons
-				pokemons = [];			
+				pokemons = [];
 				// 更改座標
 				centerLocation = msg.location;
 				// 通知
@@ -510,7 +510,7 @@ function prepareNextPatrol(thisSpotterId) {
 	if (activeChatIDs.length > 0 && isPatrolling) {
 		if (thisSpotterId == runningSpotterId) {
 			// Spotter 沒死掉 觸發下一次巡邏
-			event.emit("patrol", runningSpotterId);	
+			event.emit("patrol", runningSpotterId);
 		} else {
 			console.log("thisSpotterId = " + thisSpotterId);
 			console.log("runningSpotterId = " + runningSpotterId);
@@ -520,18 +520,18 @@ function prepareNextPatrol(thisSpotterId) {
 
 // 遇到錯誤或呼叫 /restart 時使用
 function restart() {
-	isWattingRestart = true;	// 設為重啟中狀態，避免重複呼叫指令造成多個 Spotter 被啟動
-	runningSpotterId = runningSpotterId + 1;	// 更新執行中的 Spotter Id
-	pokespotters[runningSpotterId] = null;		// 捨棄舊的 Spotter
+	isWattingRestart = true; // 設為重啟中狀態，避免重複呼叫指令造成多個 Spotter 被啟動
+	runningSpotterId = runningSpotterId + 1; // 更新執行中的 Spotter Id
+	pokespotters[runningSpotterId] = null; // 捨棄舊的 Spotter
 
 	console.log("10秒後重新開使巡邏");
 	setTimeout(function() {
 		// 建立下一個 Spotter
 		pokespotters[runningSpotterId] = Pokespotter(config.account);
-		pokespotters[runningSpotterId].runCount = 0;// 將執行次數歸零
+		pokespotters[runningSpotterId].runCount = 0; // 將執行次數歸零
 		// 觸發巡邏
 		event.emit("patrol", runningSpotterId);
-		isWattingRestart = false;	// 取消啟動中狀態
+		isWattingRestart = false; // 取消啟動中狀態
 	}, 10000);
 }
 
@@ -556,7 +556,7 @@ function getLastTime(endTime) {
 
 // 檢查訊息時間是否為伺服器啟動後
 function checkMsgTime(msgTime) {
-	return ( msgTime - (initDate / 1000) ) >= 0
+	return (msgTime - (initDate / 1000)) >= 0
 }
 
 // 取得 時:分:秒
