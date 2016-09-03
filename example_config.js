@@ -85,13 +85,5 @@ module.exports = {
 	 * 設定後不會通知，編號可參考 pokemon_name.js
 	 * 範例：blacklist: [10, 13, 16, 19]
 	 */
-	blacklist: [],
-
-	/**
-	 * Debug 輸出
-	 * 預設為關閉 (false)
-	 * 遇到問題時可以把他打開 (true)
-	 * 然後把訊息貼出來看看
-	 */
-	debug: false
+	blacklist: []
 };

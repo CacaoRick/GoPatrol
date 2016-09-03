@@ -27,7 +27,7 @@ var spotterOptional = {
 	requestDelay: config.searchDelay * 1000,	// 搜尋延遲
 	currentTime: initDate
 }
-const debug = config.debug;
+const debug = false;
 if (debug) {
 	console.log("debug on.")
 }
@@ -251,7 +251,7 @@ event.on("getmap", function(chatId) {
 
 				// 續編 message
 				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
-					"｜" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+					"\n" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
 			}
 		});
 
@@ -490,7 +490,7 @@ if (config.telegramChannelID != null) {
 				// 更改座標
 				centerLocation = msg.location;
 				// 通知
-				telegramBot.sendMessage(msg.chat.id, "已更改巡邏中心位置");
+				telegramBot.sendMessage(msg.chat.id, "已更改巡邏中心位置，將於下一次巡邏開始套用");
 			}
 		}
 	});
