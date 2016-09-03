@@ -8,6 +8,8 @@
 
 目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)，請詳閱[使用說明](https://github.com/CacaoRick/GoPatrol#使用說明)。
 
+**注意，此版本更新有更動 `config.js`**
+
 [Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-win_x64.zip)
 
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-mac.zip)
@@ -19,6 +21,7 @@
 v1.1.0
 
 - 新增白名單功能，會先以白名單過濾，再用黑名單篩選
+- 新增 `showDistance` 選項，某些大範圍廣播頻道不適合通知距離，可設為 `false` 將通知中的距離關閉
 - 新增 `/setsteps <steps>` 指令，可用 Telegram 設定 `searchSteps`
 - `/getmap` 改版，現在取回的地圖會有寶可夢的小ICON
 - 巡邏結束後顯示費時

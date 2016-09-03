@@ -15,9 +15,10 @@ const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
 const initDate = new Date();
 const iconHost = "http://gopatrol.ass.tw/pixel_icons/";
 const fifteenMinutes = 900000;
+// 通知顯示距離
+var showDistance = typeof config.showDistance === "undefined" ? true : config.showDistance;
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
-var showDistance = config.showDistance || true;	// 通知顯示距離
 var whitelist = config.whitelist || [];			// 寶可夢白名單
 var blacklist = config.blacklist || [];			// 寶可夢黑名單
 var spotterOptional = {
@@ -248,8 +249,12 @@ event.on("getmap", function(chatId) {
 				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconHost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
 
 				// 續編 message
+				var distance = "";
+				if (showDistance) {
+					distance = p.distance + "m｜";
+				}
 				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
-					"\n" + p.distance + "m｜-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+					"\n" + distance + "-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
 			}
 		});
 
@@ -526,11 +531,15 @@ function restart() {
 }
 
 function sendPokemon(chatId, pokemon, lastTime) {
+	var distance = "";
+	if (showDistance) {
+		distance = pokemon.distance + "m";
+	}
 	telegramBot.sendVenue(
 		chatId,
 		pokemon.latitude,
 		pokemon.longitude,
-		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId] + " " + pokemon.distance + "m",
+		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId] + " " + distance,
 		"剩餘 " + getMMSS(lastTime) + " 結束 " + getHHMMSS(pokemon.expirationTime)
 	);
 }
