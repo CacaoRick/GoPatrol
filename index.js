@@ -337,6 +337,23 @@ if (config.telegramChannelID != null) {
 } else {
 	console.log("機器人模式啟動，請在 Telegram 聊天中傳送指令\n");
 
+	telegramBot.onText(/\/setsteps (.+)/, function (msg, match) {
+		if (debug) {
+			console.log("on message event. mag:");
+			console.log(msg);
+			console.log("match:")
+			console.log(match);
+		}
+
+		var chatId = msg.chat.id;	// chat.id 可能會是群組ID或個人ID
+		var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0;	// 傳訊者是否為管理員
+		var value = Number(match[1]);
+		if (!isNaN(value) && isAdmin) {
+			spotterOptional.steps = value;
+			telegramBot.sendMessage(chatId, "搜尋範圍已設為 " + value + "，將於下一次巡邏開始套用");
+		}
+	});
+
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
 		if (debug) {
