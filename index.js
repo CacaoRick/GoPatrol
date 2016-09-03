@@ -486,7 +486,7 @@ if (config.telegramChannelID != null) {
 			// 只接受伺服器啟動後的指令
 			if (msg.date - initDate >= 0) {
 				// 清空 pokemons
-							
+				pokemons = [];			
 				// 更改座標
 				centerLocation = msg.location;
 				// 通知
