@@ -2,18 +2,18 @@
 console.log("Go Patrol version:");
 console.log("v1.0.2");
 const config = require("./config.js");
-const pokemonNames = require("./pokemon_names.js");
 const TelegramBot = require("./telegramBot.js")
-const EventEmitter = require("events");
+const pokemonNames = require("./pokemon_names.js");
+const Jimp = require("jimp");
 const request = require('request');
 const Pokespotter = require("pokespotter");
-const Jimp = require("jimp");
+const EventEmitter = require("events");
 
 const event = new EventEmitter();
 const telegramBot = new TelegramBot(config.telegramBotToken, { polling: true });
 const initDate = new Date();
+const iconHost = "http://gopatrol.ass.tw/pixel_icons/";
 const fifteenMinutes = 900000;
-const iconhost = "http://gopatrol.ass.tw/pixel_icons/";
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
 var whitelist = config.whitelist;	// 寶可夢白名單
@@ -246,7 +246,7 @@ event.on("getmap", function(chatId) {
 				}
 
 				// 續編 markers
-				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconhost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconHost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
 
 				// 續編 message
 				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] + 
@@ -254,73 +254,77 @@ event.on("getmap", function(chatId) {
 			}
 		});
 
-		// 準備靜態地圖 url
-		var mapurls = [];
-		var oldMapUrl = mapUrlNormal;
-		markers.forEach(function(m, idx) {
-			if (idx == 0) {
-				mapurls.push(mapUrlNormal + m);
-			} else {
-				mapurls.push(mapUrlTransparent + m);
-			}
-			oldMapUrl = oldMapUrl + m;
-		});
-		if (debug) {
-			telegramBot.sendMessage(chatId, oldMapUrl);	
-		}
-		
-		// 處理每張地圖
-		var mapImage = null;
-		var jimpImages = [];
-		var processCount = 0;
-		mapurls.forEach(function(url, idx) {
-			if (idx == 0) {
-				Jimp.read(url, saveBase);	// 底圖另外存在 mapImage
-			} else {
-				Jimp.read(url, processImage);
-			}
-		});
-
-		// 儲存有底圖的地圖影像到 mapImage
-		function saveBase(err, image) {
-			if (err) {
-				console.log("影像處理失敗");
-				throw err;
-			} else {
-				mapImage = image;
-				processCount++;
-				if (processCount == mapurls.length) {
-					// 全部處理完畢，開始合成地圖並傳送
-					sendMap();
+		if (prePokemonId == 0) {
+			telegramBot.sendMessage(chatId, "目前無資料");
+		} else {
+			// 準備靜態地圖 url
+			var mapurls = [];
+			var oldMapUrl = mapUrlNormal;
+			markers.forEach(function(m, idx) {
+				if (idx == 0) {
+					mapurls.push(mapUrlNormal + m);
+				} else {
+					mapurls.push(mapUrlTransparent + m);
 				}
+				oldMapUrl = oldMapUrl + m;
+			});
+			if (debug) {
+				telegramBot.sendMessage(chatId, oldMapUrl);	
 			}
-		}
-		
-		// 儲存地圖影像到 jimpImages[]
-		function processImage(err, image) {
-			if (err) {
-				console.log("影像處理失敗");
-				throw err;
-			} else {
-				jimpImages.push(image);
-				processCount++;
-				if (processCount == mapurls.length) {
-					// 全部處理完畢，開始合成地圖並傳送
-					sendMap();
+			
+			// 處理每張地圖
+			var mapImage = null;
+			var jimpImages = [];
+			var processCount = 0;
+			mapurls.forEach(function(url, idx) {
+				if (idx == 0) {
+					Jimp.read(url, saveBase);	// 底圖另外存在 mapImage
+				} else {
+					Jimp.read(url, processImage);
 				}
-			}
-		}
-
-		// 全部處理完畢，開始合成地圖並傳送
-		function sendMap() {
-			jimpImages.forEach(function(img, idx) {
-				mapImage.composite(img, 0, 0);
 			});
 
-			telegramBot.sendMessage(chatId, message);
-			mapImage.getBuffer(Jimp.MIME_PNG, function(err, buffer) {
-				telegramBot.sendPhoto(chatId, buffer);
-			});
+			// 儲存有底圖的地圖影像到 mapImage
+			function saveBase(err, image) {
+				if (err) {
+					console.log("影像處理失敗");
+					throw err;
+				} else {
+					mapImage = image;
+					processCount++;
+					if (processCount == mapurls.length) {
+						// 全部處理完畢，開始合成地圖並傳送
+						sendMap();
+					}
+				}
+			}
+			
+			// 儲存地圖影像到 jimpImages[]
+			function processImage(err, image) {
+				if (err) {
+					console.log("影像處理失敗");
+					throw err;
+				} else {
+					jimpImages.push(image);
+					processCount++;
+					if (processCount == mapurls.length) {
+						// 全部處理完畢，開始合成地圖並傳送
+						sendMap();
+					}
+				}
+			}
+
+			// 全部處理完畢，開始合成地圖並傳送
+			function sendMap() {
+				jimpImages.forEach(function(img, idx) {
+					mapImage.composite(img, 0, 0);
+				});
+
+				telegramBot.sendMessage(chatId, message);
+				mapImage.getBuffer(Jimp.MIME_PNG, function(err, buffer) {
+					telegramBot.sendPhoto(chatId, buffer);
+				});
+			}
 		}
 	} else {
 		telegramBot.sendMessage(chatId, "目前無資料");
@@ -461,7 +465,7 @@ if (config.telegramChannelID != null) {
 			}
 
 			// 判斷有在 ActiveChatID 陣列中才能使用，才不會被路人亂+BOT亂用
-			if (command == "/getmap" && isInActiveChatID) {
+			if (command == "/getmap") {
 				// 取得附近寶可夢的地圖圖檔
 				event.emit("getmap", chatId);
 			}
