@@ -212,7 +212,7 @@ event.on("getmap", function(chatId) {
 		var mapcenter = centerLocation.latitude + "," + centerLocation.longitude;
 
 		// Build URL
-		var zoom = 17 - Math.ceil(spotterOptional.steps / 3);
+		var zoom = 17 - Math.floor(spotterOptional.steps / 3);
 		var size = "640x640";
 		var TransparentStyle = "&style=feature:all|visibility:off";	// 取透明底圖用
 		// 不透明地圖 URL
@@ -347,8 +347,7 @@ if (config.telegramChannelID != null) {
 
 	telegramBot.onText(/\/setsteps (.+)/, function (msg, match) {
 		if (debug) {
-			console.log("on message event. mag:");
-			console.log(msg);
+			console.log("on message event.");
 			console.log("match:")
 			console.log(match);
 		}
