@@ -17,13 +17,11 @@ const iconHost = "http://gopatrol.ass.tw/pixel_icons/";
 const fifteenMinutes = 900000;
 var telegramAdminUsernames = config.telegramAdminUsernames;	// 管理員名單
 var centerLocation = config.initCenterLocation;	// 搜尋中心位置
-var whitelist = config.whitelist;	// 寶可夢白名單
-if (typeof whitelist == undefined) {
-	whitelist = [];
-}
-var blacklist = config.blacklist;	// 寶可夢黑名單
+var showDistance = config.showDistance || true;	// 通知顯示距離
+var whitelist = config.whitelist || [];			// 寶可夢白名單
+var blacklist = config.blacklist || [];			// 寶可夢黑名單
 var spotterOptional = {
-	steps: config.searchSteps,			// 搜尋範圍
+	steps: config.searchSteps,					// 搜尋範圍
 	requestDelay: config.searchDelay * 1000,	// 搜尋延遲
 	currentTime: initDate
 }
