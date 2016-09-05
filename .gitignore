@@ -36,4 +36,9 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
+# WebStorm
+.idea
+
+# Config
 config.js
+config.json
