@@ -132,6 +132,7 @@ event.on("patrol", function(thisSpotterId) {
 			if (isNeedSave) {
 				// 要儲存，先幫他加上通知狀態，設為false
 				np.isInformed = false;
+				np.isErrorTime = false;
 				pokemons.push(np);
 				console.log("新增 #" + np.pokemonId, pokemonNames[np.pokemonId], np.spawnPointId, getHHMMSS(np.expirationTime));
 				newPokemonCount++;
@@ -167,7 +168,13 @@ event.on("checkLastTime", function(thisSpotterId) {
 		console.log("[" + getHHMMSS(Date.now()) + "] 開始檢查結束時間並進行通知...\n");
 		for (var i = pokemons.length - 1; i >= 0; i--) {
 			var lastTime = getLastTime(pokemons[i].expirationTime);
-			if (lastTime > 0 && lastTime <= fifteenMinutes) {
+			if (lastTime > 0) {
+				if (lastTime > fifteenMinutes) {
+					// 時間異常，將剩餘時間設為15分並標記為錯誤時間的寶可夢
+					pokemons[i].isErrorTime = true;
+					pokemons[i].expirationTime = Date.now() + fifteenMinutes;
+					lastTime = getLastTime(pokemons[i].expirationTime)
+				}
 				// 尚未結束，確認是否未通知
 				if (!pokemons[i].isInformed) {
 					// 尚未通知，執行通知
@@ -254,8 +261,11 @@ event.on("getmap", function(chatId) {
 				if (showDistance) {
 					distance = p.distance + "m｜";
 				}
+				if (p.isErrorTime) {
+					questionMark = "?"
+				}
 				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] +
-					"\n" + distance + "-" + getMMSS(lastTime) + "｜" + getHHMMSS(p.expirationTime) + "\n";
+					"\n" + distance + "-" + getMMSS(lastTime) + questionMark + "｜" + getHHMMSS(p.expirationTime) + questionMark +"\n";
 			}
 		});
 
@@ -540,12 +550,16 @@ function sendPokemon(chatId, pokemon, lastTime) {
 	if (showDistance) {
 		distance = pokemon.distance + "m";
 	}
+	var questionMark = "";
+	if (pokemon.isErrorTime) {
+		questionMark = "?"
+	}
 	telegramBot.sendVenue(
 		chatId,
 		pokemon.latitude,
 		pokemon.longitude,
 		"#" + pokemon.pokemonId + " " + pokemonNames[pokemon.pokemonId] + " " + distance,
-		"剩餘 " + getMMSS(lastTime) + " 結束 " + getHHMMSS(pokemon.expirationTime)
+		"剩餘 " + getMMSS(lastTime) + questionMark + " 結束 " + getHHMMSS(pokemon.expirationTime) + questionMark
 	);
 }
 
