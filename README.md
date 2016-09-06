@@ -1,5 +1,5 @@
 # GoPatrol
-[![贊助](https://img.shields.io/badge/贊助-Donate-blue.svg)](http://goo.gl/tUOEKA)
+[![贊助](https://img.shields.io/badge/Donate-贊助-blue.svg)](http://goo.gl/tUOEKA)
 
 以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。
 本程式使用 [pokespotter](https://github.com/brentschooley/pokespotter) 與 [node-telegram-bot-api](https://github.com/yagop/node-telegram-bot-api) Node.js API 製作。
