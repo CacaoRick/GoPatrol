@@ -261,6 +261,7 @@ event.on("getmap", function(chatId) {
 				if (showDistance) {
 					distance = p.distance + "m｜";
 				}
+				var questionMark = "";
 				if (p.isErrorTime) {
 					questionMark = "?"
 				}
@@ -534,7 +535,7 @@ function restart() {
 	runningSpotterId = runningSpotterId + 1; // 更新執行中的 Spotter Id
 	pokespotters[runningSpotterId] = null; // 捨棄舊的 Spotter
 
-	console.log("10秒後重新開使巡邏");
+	console.log("10秒後重新開始巡邏");
 	setTimeout(function() {
 		// 建立下一個 Spotter
 		pokespotters[runningSpotterId] = Pokespotter(config.account);
