@@ -13,7 +13,7 @@ class TelegramBot extends NodeTelegramBotAPI {
 		form.longitude = longitude;
 		form.title = title;
 		form.address = address;
-		return this._request('sendVenue', { form });
+		return this._request('sendVenue', { form: form });
 	}
 }
 
