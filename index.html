@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gopatrol by GoPatrolTeam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Gopatrol</h1>
+      <h2 class="project-tagline">尋找附近的寶可夢並利用 Telegram bot 發送通知給使用者、頻道或群組</h2>
+      <a href="https://github.com/GoPatrolTeam/GoPatrol" class="btn">View on GitHub</a>
+      <a href="https://github.com/GoPatrolTeam/GoPatrol/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/GoPatrolTeam/GoPatrol/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p>本程式使用 <a href="https://github.com/brentschooley/pokespotter">pokespotter</a> 與 <a href="https://github.com/yagop/node-telegram-bot-api">node-telegram-bot-api</a> Node.js API 製作。</p>
+
+<p>作者 Telegram <a href="http://telegram.me/CacaoRick">@CacaoRick</a>，問題與討論請至 Telegram 群組<a href="https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw">自己的廣播自己架</a>。</p>
+
+<p>如果覺得 GoPatrol 還不錯的話，歡迎<a href="http://goo.gl/tUOEKA">自由贊助</a>，謝謝大家的支持。</p>
+
+<h2>
+<a id="下載" class="anchor" href="#%E4%B8%8B%E8%BC%89" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>下載</h2>
+
+<p>目前最新版本為 <a href="https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.1">v1.1.1</a>，請詳閱<a href="https://github.com/CacaoRick/GoPatrol#%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E">使用說明</a>。</p>
+
+<p><a href="https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-win_x64.zip">Windows X64</a></p>
+
+<p><a href="https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-mac.zip">Mac OSX</a></p>
+
+<p>其他系統可下載 Mac 版並自行下載 v6.4.0 以上之 <a href="https://nodejs.org/en/download/current/">Node.js</a> 使用。</p>
+
+<p>32位元之 Windows 可下載 Win_x64 版並刪除資料夾中之 <code>node.exe</code>，再安裝 v6.4.0 以上之 Node.js。</p>
+
+<p>不支援 Windows XP。</p>
+
+<h3>
+<a id="更新內容" class="anchor" href="#%E6%9B%B4%E6%96%B0%E5%85%A7%E5%AE%B9" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>更新內容</h3>
+
+<p>v1.1.1</p>
+
+<ul>
+<li>修正錯字</li>
+<li>照常顯示時間異常的寶可夢，將剩餘時間設為15分，並在剩餘時間與結束時間加上？標記</li>
+<li>優化 <code>/getmap</code> 功能，在處理地圖的過程中，若同時有多人或多次使用<code>/getmap</code> 指令還是只會處理一次</li>
+<li>讓部分指令能使用縮寫
+
+<ul>
+<li>
+<code>/help</code> -&gt; <code>/h</code>
+</li>
+<li>
+<code>/restart</code> -&gt; <code>/re</code>
+</li>
+<li>
+<code>/status</code> -&gt; <code>/stat</code>
+</li>
+<li>
+<code>/setsteps</code> -&gt; <code>/step</code>
+</li>
+<li>
+<code>/getmap</code> -&gt; <code>/m</code>
+</li>
+</ul>
+</li>
+</ul>
+
+<p>v1.1.0</p>
+
+<ul>
+<li>新增白名單功能，可跟黑名單擇一使用（另一個留空[ ]）</li>
+<li>新增 <code>showDistance</code> 選項，某些大範圍廣播頻道不適合通知距離，可設為 <code>false</code> 將通知中的距離關閉</li>
+<li>新增 <code>/setsteps &lt;steps&gt;</code> 指令，可用 Telegram 設定 <code>searchSteps</code>
+</li>
+<li>
+<code>/getmap</code> 改版，現在取回的地圖會有寶可夢的小ICON</li>
+<li>巡邏結束後顯示費時</li>
+<li>防止機器人接收伺服器啟動前的指令</li>
+<li>已知API會提供剩餘時間異常的寶可夢，因此目前改為剩餘時間超過15分鐘的不通知</li>
+<li>傳送位置訊息後會將現有的寶可夢資料清空</li>
+<li>增強防呆能力</li>
+</ul>
+
+<p>v1.0.2</p>
+
+<ul>
+<li>新增 <code>debug</code> 選項，設為 <code>true</code> 可以印出更多資訊</li>
+<li>修改 <code>autoRestartTime</code> 預設值為 0，設為 0 時不啟動卡住重啟功能</li>
+<li>改善巡邏卡住重啟功能</li>
+</ul>
+
+<p>v1.0.1</p>
+
+<ul>
+<li>新增管理者功能</li>
+<li>新增群組機器人功能</li>
+<li>新增巡邏卡住自動重啟功能</li>
+<li>修改設定檔時間單位為秒</li>
+<li>刪除 <code>/start</code> 指令，改以 <code>/run</code> 取代，避免與機器人啟動指令衝突</li>
+<li>新增 <code>/restart</code> 指令</li>
+<li>新增 <code>/status</code> 指令</li>
+</ul>
+
+<h2>
+<a id="使用說明" class="anchor" href="#%E4%BD%BF%E7%94%A8%E8%AA%AA%E6%98%8E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用說明</h2>
+
+<ul>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E5%95%9F%E5%8B%95%E4%BC%BA%E6%9C%8D%E5%99%A8">啟動伺服器</a></li>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%8C%87%E4%BB%A4%E8%AA%AA%E6%98%8E">機器人指令說明</a></li>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E5%BB%BA%E7%AB%8B-telegram-%E6%A9%9F%E5%99%A8%E4%BA%BA">建立 Telegram 機器人</a></li>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E4%BD%BF%E7%94%A8%E5%BB%A3%E6%92%AD%E9%A0%BB%E9%81%93%E6%A8%A1%E5%BC%8F">使用廣播頻道模式</a></li>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E4%BD%BF%E7%94%A8%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%A8%A1%E5%BC%8F">使用機器人模式</a></li>
+<li><a href="https://github.com/CacaoRick/GoPatrol#%E4%BD%BF%E7%94%A8%E7%BE%A4%E7%B5%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%A8%A1%E5%BC%8F">使用群組機器人模式</a></li>
+</ul>
+
+<h3>
+<a id="啟動伺服器" class="anchor" href="#%E5%95%9F%E5%8B%95%E4%BC%BA%E6%9C%8D%E5%99%A8" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>啟動伺服器</h3>
+
+<ol>
+<li>到 <a href="https://github.com/CacaoRick/GoPatrol/releases">Release</a> 頁面根據作業系統下載對應的 zip 檔</li>
+<li>解壓縮後將資料夾中的 <code>example_config.js</code> 複製一份改名為 <code>config.js</code>
+</li>
+<li>以文字編輯器開啟 <code>config.js</code> 編輯設定檔（建議使用<a href="https://notepad-plus-plus.org/download/v6.9.2.html">nodepad++</a>等文字編輯器開啟）</li>
+<li>點兩下資料夾中的 <code>start.bat</code> 或 <code>start.command</code>
+</li>
+</ol>
+
+<h3>
+<a id="機器人指令說明" class="anchor" href="#%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%8C%87%E4%BB%A4%E8%AA%AA%E6%98%8E" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>機器人指令說明</h3>
+
+<p><code>(括號為指令縮寫)</code> <code>&lt;尖括號為參數&gt;</code></p>
+
+<ul>
+<li>
+<code>/help</code> (<code>/h</code>) 查看說明</li>
+<li>
+<code>/getmap</code> (<code>/m</code>) 取得附近寶可夢地圖</li>
+</ul>
+
+<p>以下指令限管理員使用：</p>
+
+<ul>
+<li>
+<code>/run</code> 開始巡邏和通知</li>
+<li>
+<code>/stop</code> 停止巡邏和通知</li>
+<li>
+<code>/restart</code> (<code>/re</code>) 強制重啟巡邏</li>
+<li>
+<code>/status</code> (<code>/stat</code>) 取得伺服器狀態</li>
+<li>
+<code>/setsteps &lt;數字&gt;</code> (<code>/step</code>) 更改巡邏範圍，例如 <code>/setsteps 2</code>
+</li>
+<li>傳送位置訊息可更改巡邏中心位置（行動裝置版 Telegram）</li>
+</ul>
+
+<h3>
+<a id="建立-telegram-機器人" class="anchor" href="#%E5%BB%BA%E7%AB%8B-telegram-%E6%A9%9F%E5%99%A8%E4%BA%BA" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>建立 Telegram 機器人</h3>
+
+<ol>
+<li>在 Telegram 中搜尋 <code>@BotFather</code>
+</li>
+<li>用 <code>/newbot</code> 建立機器人</li>
+<li>輸入機器人名稱（例如 公司GoPatrol）</li>
+<li>輸入機器人使用者名稱，限英文且結尾須為 <code>bot</code>（例如 GoPatrol123_bot）</li>
+<li>將 BotFather 給你的 token 複製貼到 <code>config.js</code> 中的 <code>telegramBotToken</code>
+</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/tutorial/bot.png" alt="Create Bot"></p>
+
+<h3>
+<a id="使用廣播頻道模式" class="anchor" href="#%E4%BD%BF%E7%94%A8%E5%BB%A3%E6%92%AD%E9%A0%BB%E9%81%93%E6%A8%A1%E5%BC%8F" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用廣播頻道模式</h3>
+
+<p>程式單純的將找到的寶可夢廣播至該頻道中，沒有指令功能。</p>
+
+<ol>
+<li>在 Telegram 建立頻道 (New Channel)</li>
+<li>需選擇公開頻道 (Public Channel)，並設定頻道連結，請記住你設定的連結，他就是你的頻道ID</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/tutorial/channel.png" alt="Create Channel"></p>
+
+<ol>
+<li>將你的機器人邀請為頻道管理員</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/tutorial/channel_admin.png" alt="Channel Admin"></p>
+
+<ol>
+<li>在 <code>config.js</code> 中將你的頻道ID前面加上<code>@</code>填入 <code>telegramChannelID</code>
+</li>
+</ol>
+
+<h3>
+<a id="使用機器人模式" class="anchor" href="#%E4%BD%BF%E7%94%A8%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%A8%A1%E5%BC%8F" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用機器人模式</h3>
+
+<p>可對機器人下指令來操控伺服器，發現寶可夢時會通知到與機器人的聊天對話中。</p>
+
+<ol>
+<li>將機器人加為好友</li>
+<li>將 <code>config.json</code> 中的 <code>telegramAdminUsernames</code> 填入你的使用者名稱(username)</li>
+<li>將 <code>config.json</code> 中的 <code>telegramChannelID</code> 設為 <code>null</code>
+</li>
+<li>啟動伺服器後，在你與機器人的聊天中輸入 <code>/run</code> 就會開始巡邏和通知</li>
+</ol>
+
+<h3>
+<a id="使用群組機器人模式" class="anchor" href="#%E4%BD%BF%E7%94%A8%E7%BE%A4%E7%B5%84%E6%A9%9F%E5%99%A8%E4%BA%BA%E6%A8%A1%E5%BC%8F" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>使用群組機器人模式</h3>
+
+<p>將機器人邀請進入群組中，供大家一起使用，並且將發現的寶可夢通知到群組中。</p>
+
+<ol>
+<li>找 <code>@BotFather</code> 下達 <code>/setjoingroups</code> 指令</li>
+<li>選擇要加入群組的機器人並按下 <code>Enable</code>
+</li>
+<li>找 <code>@BotFather</code> 下達 <code>/setprivacy</code> 指令</li>
+<li>選擇要加入群組的機器人並按下 <code>Disable</code>
+</li>
+<li>建立群組(New Group)，將機器人邀請加入群組中</li>
+<li>開啟群組的管理員設定，將 <code>All Members Are Admins</code> 取消勾選，並將你的機器人設為管理員</li>
+</ol>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/tutorial/group_admin.png" alt="Group Admin"></p>
+
+<ol>
+<li>將 <code>config.json</code> 中的 <code>telegramAdminUsernames</code> 填入你的使用者名稱(username)</li>
+<li>將 <code>config.json</code> 中的 <code>telegramChannelID</code> 設為 <code>null</code>
+</li>
+<li>啟動伺服器後，在群組中輸入 <code>/run</code> 就會開始巡邏和通知</li>
+</ol>
+
+<h2>
+<a id="警告" class="anchor" href="#%E8%AD%A6%E5%91%8A" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>警告</h2>
+
+<p>用這個一定有被BAN的風險，使用前自己考慮要不要用，請勿使用主帳號登入！</p>
+
+<h2>
+<a id="截圖" class="anchor" href="#%E6%88%AA%E5%9C%96" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>截圖</h2>
+
+<p>Telegram Desktop</p>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/screenshot/MacDemo.png" alt="Mac Demo"></p>
+
+<p>Telegram iOS APP</p>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/screenshot/iOSDemo.png" alt="iOS Demo"></p>
+
+<p><img src="https://raw.githubusercontent.com/GoPatrolTeam/GoPatrol/master/screenshot/getmapDemo.png" alt="iOS Demo"></p>
+
+<h2>
+<a id="感謝" class="anchor" href="#%E6%84%9F%E8%AC%9D" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>感謝</h2>
+
+<p>感謝<code>柯姊</code>提供 Icon host
+感謝<code>Joseph Tsai</code> 提供部分程式碼
+感謝<a href="https://telegram.me/joinchat/DoTGVEFiQS0UGIg8atBTWw">自己的廣播自己架</a>的大家提供各種意見</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/GoPatrolTeam/GoPatrol">Gopatrol</a> is maintained by <a href="https://github.com/GoPatrolTeam">GoPatrolTeam</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
