@@ -357,6 +357,25 @@ if (config.telegramChannelID != null) {
 		}
 	});
 
+	telegramBot.onText(/\/step (.+)/, function(msg, match) {
+		if (debug) {
+			console.log("on message event.");
+			console.log("match:")
+			console.log(match);
+		}
+
+		// 只接受伺服器啟動後的指令
+		if (checkMsgTime) {
+			var chatId = msg.chat.id; // chat.id 可能會是群組ID或個人ID
+			var isAdmin = telegramAdminUsernames.indexOf(msg.from.username) >= 0; // 傳訊者是否為管理員
+			var value = Number(match[1]);
+			if (!isNaN(value) && isAdmin) {
+				spotterOptional.steps = value;
+				telegramBot.sendMessage(chatId, "搜尋範圍已設為 " + value + "，將於下一次巡邏開始套用");
+			}
+		}
+	});
+
 	// Bot 收到訊息，處理指令
 	telegramBot.on("message", function(msg) {
 		if (debug) {
@@ -376,21 +395,22 @@ if (config.telegramChannelID != null) {
 				command = msg.text.split("@")[0]; // 若在頻道中按下BOT傳送的指令後面會多出@BotId，用split切開取最前面才會是指令
 
 				// 發送說明
-				if (command == "/help") {
+				if (command == "/help" || command == "/h") {
 					telegramBot.sendMessage(
 						chatId,
 						"GoPatrol " + version + "\n" +
 						"說明：\n" +
 						"以指定位置為中心進行巡邏，尋找附近的寶可夢並利用 Telegram bot 送出通知給使用者、頻道或群組。\n\n" +
+						"(括號為指令縮寫) <尖括號為參數>" +
 						"一般指令：\n" +
-						"/getmap 取得附近寶可夢地圖\n\n" +
+						"/getmap (/m) 取得附近寶可夢地圖\n\n" +
 						"管理員專用：\n" +
-						"/help 查看說明\n" +
+						"/help (/h) 查看說明\n" +
 						"/run 開始巡邏和通知\n" +
 						"/stop 停止巡邏和通知\n" +
-						"/restart 強制重啟巡邏\n" +
-						"/status 取得伺服器狀態\n" +
-						"/setsteps <數字> 更改巡邏範圍，例如 /setsteps 2\n" +
+						"/restart (/re) 強制重啟巡邏\n" +
+						"/status (/stat) 取得伺服器狀態\n" +
+						"/setsteps <數字> (/step) 更改巡邏範圍，例如 /setsteps 2\n" +
 						"傳送位置訊息可更改巡邏中心位置\n\n" +
 						"首頁：https://github.com/CacaoRick/GoPatrol"
 					);
@@ -436,7 +456,7 @@ if (config.telegramChannelID != null) {
 				}
 
 				// 強制重啟
-				if (command == "/restart" && isAdmin) {
+				if ( (command == "/restart" || command == "/re") && isAdmin ) {
 					console.log(msg.from.username + ": " + command);
 					if (!isPatrolling) {
 						// 巡邏未啟動
@@ -446,12 +466,13 @@ if (config.telegramChannelID != null) {
 						telegramBot.sendMessage(chatId, "正在重啟中");
 					} else {
 						// 不在重啟中狀態，可以重新啟動
+						telegramBot.sendMessage(chatId, "將於10秒後重新啟動");
 						restart();
 					}
 				}
 
 				// 接收狀態
-				if (command == "/status" && isAdmin) {
+				if ( (command == "/status" || command == "/stat") && isAdmin ) {
 					telegramBot.sendMessage(chatId,
 						"伺服器狀態\n" +
 						"巡邏中：" + isPatrolling + "\n" +
@@ -465,7 +486,7 @@ if (config.telegramChannelID != null) {
 				}
 
 				// 判斷有在 ActiveChatID 陣列中才能使用，才不會被路人亂+BOT亂用
-				if (command == "/getmap") {
+				if (command == "/getmap" || command == "/m") {
 					// 取得附近寶可夢的地圖圖檔
 					event.emit("getmap", chatId);
 				}
