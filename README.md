@@ -15,7 +15,9 @@
 [Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-mac.zip)
 
 其他系統可下載 Mac 版並自行下載 v6.4.0 以上之 [Node.js](https://nodejs.org/en/download/current/) 使用。
+
 32位元之 Windows 可下載 Win_x64 版並刪除資料夾中之 `node.exe`，再安裝 v6.4.0 以上之 Node.js。
+
 不支援 Windows XP。
 
 ### 更新內容
