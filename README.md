@@ -8,19 +8,19 @@
 
 ## 下載
 
-目前最新版本為 [v1.1.0](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.0)，請詳閱[使用說明](https://github.com/CacaoRick/GoPatrol#使用說明)。
+目前最新版本為 [v1.1.1](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.1)，請詳閱[使用說明](https://github.com/CacaoRick/GoPatrol#使用說明)。
 
-**注意，此版本更新有更動 `config.js`**
+[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-win_x64.zip)
 
-[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-win_x64.zip)
-
-[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.0/GoPatrol-mac.zip)
+[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-mac.zip)
 
 其他系統可下載 Mac 版並自行下載 v6.4.0 以上之 [Node.js](https://nodejs.org/en/download/current/) 使用。
+32位元之 Windows 可下載 Win_x64 版並刪除資料夾中之 `node.exe`，再安裝 v6.4.0 以上之 Node.js。
+不支援 Windows XP。
 
 ### 更新內容
 
-v1.1.1 Coming Soooooooooooooooon...
+v1.1.1
 
 - 修正錯字
 - 照常顯示時間異常的寶可夢之剩餘時間為15分，並在剩餘時間與結束時間加上？標記
@@ -121,6 +121,8 @@ v1.0.1
 
 1. 找 `@BotFather` 下達 `/setjoingroups` 指令
 2. 選擇要加入群組的機器人並按下 `Enable`
+1. 找 `@BotFather` 下達 `/setprivacy` 指令
+2. 選擇要加入群組的機器人並按下 `Disable`
 3. 建立群組(New Group)，將機器人邀請加入群組中
 4. 開啟群組的管理員設定，將 `All Members Are Admins` 取消勾選，並將你的機器人設為管理員
 
