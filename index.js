@@ -3,7 +3,7 @@ const version = "v1.1.0";
 console.log("Go Patrol version:");
 console.log(version);
 const config = require("./config.js");
-const TelegramBot = require("./telegramBot.js")
+const TelegramBot = require("./telegramBot.js");
 const pokemonNames = require("./pokemon_names.js");
 const Jimp = require("jimp");
 const request = require('request');
@@ -31,14 +31,20 @@ const debug = false;
 if (debug) {
 	console.log("debug on.")
 }
-var mapBuffer;
 var pokespotters = []; // 儲存 Spotter 用
 pokespotters[0] = Pokespotter(config.account); // 建立第一個 Spotter
 pokespotters[0].runCount = 0; // 記錄 Spotter 執行次數，用來確認是不是卡住了
 var runningSpotterId = 0; // 記錄目前 Spotter 的 Id，用來確認 Spotter 存活狀態
 var isWattingRestart = false; // 正在重啟中，用來確保不要重複重啟
 var isPatrolling = false; // 巡邏執行狀態
-var pokemons = []; // 儲存的寶可夢
+var isDrawMap = false;  // getmap的狀態
+var getmapUsers = [];   // 正在用 getmap 的使用者
+var mapMessage = "";    // 處理地圖用，寶可夢訊息
+var mapurls = [];       // 處理地圖用
+var mapImage = null;    // 處理地圖用
+var jimpImages = [];    // 處理地圖用
+var processCount = 0;   // 處理地圖用
+var pokemons = [];      // 儲存的寶可夢
 var activeChatIDs = []; // 啟動中的 Telegram ChatID
 
 // 巡邏
@@ -210,135 +216,103 @@ event.on("getmap", function(chatId) {
 
 	if (pokemons.length > 0) {
 		telegramBot.sendMessage(chatId, "地圖製作中，請稍候...");
-		// 照ID排列
-		var mapPokemon = pokemons;
-		mapPokemon.sort(function(a, b) {
-			return a.pokemonId - b.pokemonId;
-		});
+		if (getmapUsers.indexOf(chatId) < 0) {
+			// 使用者尚未登記，存入名單中
+			getmapUsers.push(chatId);
+		}
 
-		var mapcenter = centerLocation.latitude + "," + centerLocation.longitude;
+		if (!isDrawMap) {
+			isDrawMap = true;   // 改變getmap執行狀態
 
-		// Build URL
-		var zoom = 17 - Math.floor(spotterOptional.steps / 3);
-		var size = "640x640";
-		var TransparentStyle = "&style=feature:all|visibility:off"; // 取透明底圖用
-		// 不透明地圖 URL
-		var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + mapcenter +
-			"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
-		// 透明地圖 URL
-		var mapUrlTransparent = mapUrlNormal + TransparentStyle;
+			// 照ID排列
+			var mapPokemon = pokemons;
+			mapPokemon.sort(function (a, b) {
+				return a.pokemonId - b.pokemonId;
+			});
 
-		// Build Markers (message 順便)
-		var message = "";
-		var typeCount = 0;
-		var prePokemonId = 0;
-		var markers = [];
-		markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + mapcenter; // 畫出中心
-		var markersIdx = 0;
-		mapPokemon.forEach(function(p) {
-			var lastTime = getLastTime(p.expirationTime);
-			if (lastTime > 0 && lastTime <= fifteenMinutes) {
-				if (typeCount % 5 == 0) {
-					if (prePokemonId == 0) {
-						// 第一次執行，不換 markersIdx
+			var mapcenter = centerLocation.latitude + "," + centerLocation.longitude;
+
+			// Build URL
+			var zoom = 17 - Math.floor(spotterOptional.steps / 3);
+			var size = "640x640";
+			var TransparentStyle = "&style=feature:all|visibility:off"; // 取透明底圖用
+			// 不透明地圖 URL
+			var mapUrlNormal = "http://maps.google.com/maps/api/staticmap?center=" + mapcenter +
+				"&zoom=" + zoom + "&size=" + size + "&maptype=roadmap&format=png&visual_refresh=true";
+			// 透明地圖 URL
+			var mapUrlTransparent = mapUrlNormal + TransparentStyle;
+
+			// Build Markers (message 順便)
+			mapMessage = "";
+			var typeCount = 0;
+			var prePokemonId = 0;
+			var markers = [];
+			markers[0] = "&markers=size:small%7Ccolor:0x0080ff%7Clabel:%7C" + mapcenter; // 畫出中心
+			var markersIdx = 0;
+			mapPokemon.forEach(function (p) {
+				var lastTime = getLastTime(p.expirationTime);
+				if (lastTime > 0 && lastTime <= fifteenMinutes) {
+					if (typeCount % 5 == 0) {
+						if (prePokemonId == 0) {
+							// 第一次執行，不換 markersIdx
+						} else {
+							// 滿五種，換 markersIdx
+							markersIdx++;
+							markers[markersIdx] = "";
+						}
+					}
+					if (p.pokemonId > prePokemonId) {
+						// 新 Type
+						typeCount++;
+						prePokemonId = p.pokemonId;
+					}
+
+					// 續編 markers
+					markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconHost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
+
+					// 續編 mapMessage
+					var distance = "";
+					if (showDistance) {
+						distance = p.distance + "m｜";
+					}
+					var questionMark = "";
+					if (p.isErrorTime) {
+						questionMark = "?"
+					}
+					mapMessage = mapMessage + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] +
+						"\n" + distance + "-" + getMMSS(lastTime) + questionMark + "｜" + getHHMMSS(p.expirationTime) + questionMark + "\n";
+				}
+			});
+
+			if (prePokemonId == 0) {
+				telegramBot.sendMessage(chatId, "目前無資料");
+				isDrawMap = false;
+			} else {
+				// 準備靜態地圖 url
+				mapurls = [];
+				var oldMapUrl = mapUrlNormal;
+				markers.forEach(function (m, idx) {
+					if (idx == 0) {
+						mapurls.push(mapUrlNormal + m);
 					} else {
-						// 滿五種，換 markersIdx
-						markersIdx++;
-						markers[markersIdx] = "";
+						mapurls.push(mapUrlTransparent + m);
 					}
-				}
-				if (p.pokemonId > prePokemonId) {
-					// 新 Type
-					typeCount++;
-					prePokemonId = p.pokemonId;
-				}
-
-				// 續編 markers
-				markers[markersIdx] = markers[markersIdx] + "&markers=icon:" + iconHost + p.pokemonId + ".png%7Cshadow:false%7C" + p.latitude + "," + p.longitude;
-
-				// 續編 message
-				var distance = "";
-				if (showDistance) {
-					distance = p.distance + "m｜";
-				}
-				var questionMark = "";
-				if (p.isErrorTime) {
-					questionMark = "?"
-				}
-				message = message + "#" + p.pokemonId + " #" + pokemonNames[p.pokemonId] +
-					"\n" + distance + "-" + getMMSS(lastTime) + questionMark + "｜" + getHHMMSS(p.expirationTime) + questionMark +"\n";
-			}
-		});
-
-		if (prePokemonId == 0) {
-			telegramBot.sendMessage(chatId, "目前無資料");
-		} else {
-			// 準備靜態地圖 url
-			var mapurls = [];
-			var oldMapUrl = mapUrlNormal;
-			markers.forEach(function(m, idx) {
-				if (idx == 0) {
-					mapurls.push(mapUrlNormal + m);
-				} else {
-					mapurls.push(mapUrlTransparent + m);
-				}
-				oldMapUrl = oldMapUrl + m;
-			});
-			if (debug) {
-				telegramBot.sendMessage(chatId, oldMapUrl);
-			}
-
-			// 處理每張地圖
-			var mapImage = null;
-			var jimpImages = [];
-			var processCount = 0;
-			mapurls.forEach(function(url, idx) {
-				if (idx == 0) {
-					Jimp.read(url, saveBase); // 底圖另外存在 mapImage
-				} else {
-					Jimp.read(url, processImage);
-				}
-			});
-
-			// 儲存有底圖的地圖影像到 mapImage
-			function saveBase(err, image) {
-				if (err) {
-					console.log("影像處理失敗");
-					throw err;
-				} else {
-					mapImage = image;
-					processCount++;
-					if (processCount == mapurls.length) {
-						// 全部處理完畢，開始合成地圖並傳送
-						sendMap();
-					}
-				}
-			}
-
-			// 儲存地圖影像到 jimpImages[]
-			function processImage(err, image) {
-				if (err) {
-					console.log("影像處理失敗");
-					throw err;
-				} else {
-					jimpImages.push(image);
-					processCount++;
-					if (processCount == mapurls.length) {
-						// 全部處理完畢，開始合成地圖並傳送
-						sendMap();
-					}
-				}
-			}
-
-			// 全部處理完畢，開始合成地圖並傳送
-			function sendMap() {
-				jimpImages.forEach(function(img, idx) {
-					mapImage.composite(img, 0, 0);
+					oldMapUrl = oldMapUrl + m;
 				});
+				if (debug) {
+					telegramBot.sendMessage(chatId, oldMapUrl);
+				}
 
-				telegramBot.sendMessage(chatId, message);
-				mapImage.getBuffer(Jimp.MIME_PNG, function(err, buffer) {
-					telegramBot.sendPhoto(chatId, buffer);
+				// 處理每張地圖
+				mapImage = null;
+				jimpImages = [];
+				processCount = 0;
+				mapurls.forEach(function (url, idx) {
+					if (idx == 0) {
+						Jimp.read(url, saveBase); // 底圖另外存在 mapImage
+					} else {
+						Jimp.read(url, processImage);
+					}
 				});
 			}
 		}
@@ -597,4 +571,52 @@ function checkAdmin(admins) {
 		admins[i] = admins[i].replace("@", "");
 	}
 	return admins;
+}
+
+// 儲存有底圖的地圖影像到 mapImage
+function saveBase(err, image) {
+	if (err) {
+		console.log("影像處理失敗");
+		throw err;
+	} else {
+		mapImage = image;
+		processCount++;
+		if (processCount == mapurls.length) {
+			// 全部處理完畢，開始合成地圖並傳送
+			sendMap();
+		}
+	}
+}
+
+// 儲存地圖影像到 jimpImages[]
+function processImage(err, image) {
+	if (err) {
+		console.log("影像處理失敗");
+		throw err;
+	} else {
+		jimpImages.push(image);
+		processCount++;
+		if (processCount == mapurls.length) {
+			// 全部處理完畢，開始合成地圖並傳送
+			sendMap();
+		}
+	}
+}
+
+// 全部處理完畢，開始合成地圖並傳送
+function sendMap() {
+	jimpImages.forEach(function (img) {
+		mapImage.composite(img, 0, 0);
+	});
+
+	getmapUsers.forEach(function(chatId) {
+		telegramBot.sendMessage(chatId, mapMessage);
+		mapImage.getBuffer(Jimp.MIME_PNG, function (err, buffer) {
+			telegramBot.sendPhoto(chatId, buffer);
+		});
+	});
+
+	// 回復初使狀態
+	isDrawMap = false;
+	getmapUsers = [];
 }
