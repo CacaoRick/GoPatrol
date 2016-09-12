@@ -174,13 +174,17 @@ event.on("checkLastTime", function(thisSpotterId) {
 		console.log("[" + getHHMMSS(Date.now()) + "] 開始檢查結束時間並進行通知...\n");
 		for (var i = pokemons.length - 1; i >= 0; i--) {
 			var lastTime = getLastTime(pokemons[i].expirationTime);
+			// 檢查是否為異常時間
+			var currentDate = (new Date(spotterOptional.currentTime)).getDate();	// 現在日期
+			var expirationDate = (new Date(pokemons[i].expirationTime)).getDate();	// 結束日期
+			if (expirationDate - currentDate != 0 && expirationDate - currentDate != 1) {
+				// 時間異常，將剩餘時間設為15分並標記為錯誤時間的寶可夢
+				pokemons[i].isErrorTime = true;
+				pokemons[i].expirationTime = Date.now() + fifteenMinutes;
+				lastTime = getLastTime(pokemons[i].expirationTime);
+				console.log("更改時間 #" + pokemons[i].pokemonId, pokemonNames[pokemons[i].pokemonId], pokemons[i].spawnPointId, getHHMMSS(pokemons[i].expirationTime));
+			}
 			if (lastTime > 0) {
-				if (lastTime > fifteenMinutes) {
-					// 時間異常，將剩餘時間設為15分並標記為錯誤時間的寶可夢
-					pokemons[i].isErrorTime = true;
-					pokemons[i].expirationTime = Date.now() + fifteenMinutes;
-					lastTime = getLastTime(pokemons[i].expirationTime)
-				}
 				// 尚未結束，確認是否未通知
 				if (!pokemons[i].isInformed) {
 					// 尚未通知，執行通知
