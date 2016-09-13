@@ -1,5 +1,5 @@
 'use strict';
-const version = "v1.1.1";
+const version = "v1.1.2";
 console.log("Go Patrol version:");
 console.log(version);
 const config = require("./config.js");
