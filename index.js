@@ -177,7 +177,7 @@ event.on("checkLastTime", function(thisSpotterId) {
 			// 檢查是否為異常時間
 			var currentDate = (new Date(spotterOptional.currentTime)).getDate();	// 現在日期
 			var expirationDate = (new Date(pokemons[i].expirationTime)).getDate();	// 結束日期
-			if (expirationDate - currentDate != 0 && expirationDate - currentDate != 1) {
+			if (expirationDate - currentDate != 0 && expirationDate - currentDate != 1 || lastTime > fifteenMinutes) {
 				// 時間異常，將剩餘時間設為15分並標記為錯誤時間的寶可夢
 				pokemons[i].isErrorTime = true;
 				pokemons[i].expirationTime = Date.now() + fifteenMinutes;
