@@ -8,11 +8,11 @@
 
 ## 下載
 
-目前最新版本為 [v1.1.1](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.1)，請詳閱[使用說明](https://github.com/CacaoRick/GoPatrol#使用說明)。
+目前最新版本為 [v1.1.2](https://github.com/CacaoRick/GoPatrol/releases/tag/v1.1.2)，請詳閱[使用說明](https://gopatrolteam.github.io/GoPatrol/)。
 
-[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-win_x64.zip)
+[Windows X64](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.2/GoPatrol-win_x64.zip)
 
-[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.1/GoPatrol-mac.zip)
+[Mac OSX](https://github.com/CacaoRick/GoPatrol/releases/download/v1.1.2/GoPatrol-mac.zip)
 
 其他系統可下載 Mac 版並自行下載 v6.4.0 以上之 [Node.js](https://nodejs.org/en/download/current/) 使用。
 
@@ -21,6 +21,10 @@
 不支援 Windows XP。
 
 ### 更新內容
+
+v1.1.2
+
+- 更改異常時間的判斷方式
 
 v1.1.1
 
