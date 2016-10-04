@@ -8,7 +8,7 @@
 
 ## 使用說明與下載
 
-<https://gopatrolteam.github.io/GoPatrol/>
+<https://cacaorick.github.io/GoPatrol/>
 
 ## 截圖
 Telegram Desktop
