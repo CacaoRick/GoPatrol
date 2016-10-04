@@ -4,9 +4,13 @@
   "description": "Telegram bot for notice nearby pokemon.",
   "main": "index.js",
   "dependencies": {
+    "bluebird": "^3.4.6",
     "events": "^1.1.1",
+    "geolib": "^2.0.21",
     "jimp": "^0.2.27",
+    "lodash": "^4.16.3",
     "node-telegram-bot-api": "^0.23.3",
+    "pogobuf": "^1.7.0",
     "pokespotter": "^0.1.5",
     "request": "^2.74.0"
   },
