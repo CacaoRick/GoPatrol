@@ -9,6 +9,7 @@
     "geolib": "^2.0.21",
     "jimp": "^0.2.27",
     "lodash": "^4.16.3",
+    "moment": "^2.15.1",
     "node-telegram-bot-api": "^0.23.3",
     "pogobuf": "^1.7.0",
     "pokespotter": "^0.1.5",
