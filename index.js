@@ -8,7 +8,9 @@ if (parseInt(process.versions.node.charAt(0)) < "7") {
 const config = require("./config.js");
 const TelegramBot = require("./telegramBot.js");
 const pokemonNames = require("./pokemon_names.js");
+const _ = require("lodash");
 const Jimp = require("jimp");
+const moment = require("moment");
 const request = require('request');
 const Pokespotter = require("pokespotter");
 const EventEmitter = require("events");
