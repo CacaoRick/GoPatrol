@@ -1,6 +1,4 @@
 @echo off
-title GoPatrol_1.1.2
-echo node version:
-node -v
+title GoPatrol
 node index.js
 pause
