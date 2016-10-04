@@ -1,7 +1,10 @@
 'use strict';
-const version = "v1.1.2";
-console.log("Go Patrol version:");
-console.log(version);
+const packagejson = require('./package.json');
+console.log(`Node v${process.versions.node} | GoPatrol v${packagejson.version}`);
+if (parseInt(process.versions.node.charAt(0)) < "7") {
+	console.log("請使用 Node v6.4.0 以上版本");
+	process.exit("1");
+}
 const config = require("./config.js");
 const TelegramBot = require("./telegramBot.js");
 const pokemonNames = require("./pokemon_names.js");
