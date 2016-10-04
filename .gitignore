@@ -39,6 +39,15 @@ jspm_packages
 # WebStorm
 .idea
 
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# typings
+/typings
+
 # Config
 config.js
 config.json
