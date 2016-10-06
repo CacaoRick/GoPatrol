@@ -6,6 +6,7 @@ if (parseInt(process.versions.node.charAt(0)) < "6") {
 	process.exit("1");
 }
 
+const fs = require("fs");
 const _ = require("lodash");
 const Jimp = require("jimp");
 const moment = require("moment");

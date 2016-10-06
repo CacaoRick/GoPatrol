@@ -6,6 +6,7 @@
   "dependencies": {
     "bluebird": "^3.4.6",
     "events": "^1.1.1",
+    "fs": "0.0.1-security",
     "geolib": "^2.0.21",
     "jimp": "^0.2.27",
     "lodash": "^4.16.3",
