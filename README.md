@@ -1,5 +1,4 @@
 # GoPatrol
-[![贊助](https://img.shields.io/badge/Donate-贊助-blue.svg)](http://goo.gl/tUOEKA)
 
 ### 已停止維護，且目前版本因官方修改 API 而無法使用
 
